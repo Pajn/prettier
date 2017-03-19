@@ -1,0 +1,2124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`callSignatureWithOptionalParameterAndInitializer.ts 1`] = `
+"// Optional parameters cannot also have initializer expressions, these are all errors
+
+function foo(x?: number = 1) { }
+var f = function foo(x?: number = 1) { }
+var f2 = (x: number, y? = 1) => { }
+
+foo(1);
+foo();
+f(1);
+f();
+f2(1);
+f2(1, 2);
+
+class C {
+    foo(x?: number = 1) { }
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+interface I {
+    (x? = 1);
+    foo(x: number, y?: number = 1);
+}
+
+var i: I;
+i();
+i(1);
+i.foo(1);
+i.foo(1, 2);
+
+var a: {
+    (x?: number = 1);
+    foo(x? = 1);
+}
+
+a();
+a(1);
+a.foo();
+a.foo(1);
+
+var b = {
+    foo(x?: number = 1) { },
+    a: function foo(x: number, y?: number = '') { },
+    b: (x?: any = '') => { }
+}
+
+b.foo();
+b.foo(1);
+b.a(1);
+b.a(1, 2);
+b.b();
+b.b(1);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Optional parameters cannot also have initializer expressions, these are all errors
+
+function foo(x?: number = 1) {}
+var f = function foo(x?: number = 1) {};
+var f2 = (x: number, y? = 1) => {};
+
+foo(1);
+foo();
+f(1);
+f();
+f2(1);
+f2(1, 2);
+
+class C {
+  foo(x?: number = 1) {}
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+interface I {
+  (x? = 1),
+  foo(x: number, y?: number = 1)
+}
+
+var i: I;
+i();
+i(1);
+i.foo(1);
+i.foo(1, 2);
+
+var a: {
+  (x?: number = 1),
+  foo(x? = 1)
+};
+
+a();
+a(1);
+a.foo();
+a.foo(1);
+
+var b = {
+  foo(x?: number = 1) {},
+  a: function foo(x: number, y?: number = \\"\\") {},
+  b: (x?: any = \\"\\") => {}
+};
+
+b.foo();
+b.foo(1);
+b.a(1);
+b.a(1, 2);
+b.b();
+b.b(1);
+"
+`;
+
+exports[`callSignatureWithoutAnnotationsOrBody.ts 1`] = `
+"// Call signatures without a return type annotation and function body return 'any'
+
+function foo(x) { }
+var r = foo(1); // void since there's a body
+
+interface I {
+    ();
+    f();
+}
+var i: I;
+var r2 = i();
+var r3 = i.f();
+
+var a: {
+    ();
+    f();
+};
+var r4 = a();
+var r5 = a.f();
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Call signatures without a return type annotation and function body return 'any'
+
+function foo(x) {}
+var r = foo(1); // void since there's a body
+
+interface I {
+  (),
+  f()
+}
+var i: I;
+var r2 = i();
+var r3 = i.f();
+
+var a: {
+  (),
+  f()
+};
+var r4 = a();
+var r5 = a.f();
+"
+`;
+
+exports[`callSignaturesThatDifferOnlyByReturnType.ts 1`] = `
+"// Each pair of signatures in these types has a signature that should cause an error. 
+// Overloads, generic or not, that differ only by return type are an error.
+interface I {
+    (x): number;
+    (x): void; // error
+    <T>(x: T): number;
+    <T>(x: T): string; // error
+}
+
+interface I2 {
+    <T>(x: T): number;
+    <T>(x: T): string; // error
+}
+
+interface I3<T> {
+    (x: T): number;
+    (x: T): string; // error
+}
+
+var a: {
+    (x, y): Object;
+    (x, y): any; // error
+}
+
+var a2: {
+    <T>(x: T): number;
+    <T>(x: T): string; // error
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Each pair of signatures in these types has a signature that should cause an error.
+// Overloads, generic or not, that differ only by return type are an error.
+interface I {
+  (x): number,
+  (
+    x
+  ): void, // error
+  <T>(x: T): number,
+  <T>(
+    x: T
+  ): string // error
+}
+
+interface I2 {
+  <T>(x: T): number,
+  <T>(
+    x: T
+  ): string // error
+}
+
+interface I3<T> {
+  (x: T): number,
+  (
+    x: T
+  ): string // error
+}
+
+var a: {
+  (x, y): Object,
+  (x, y): any
+}; // error
+
+var a2: {
+  <T>(x: T): number,
+  <T>(x: T): string
+}; // error
+"
+`;
+
+exports[`callSignaturesThatDifferOnlyByReturnType2.ts 1`] = `
+"// Normally it is an error to have multiple overloads which differ only by return type in a single type declaration.
+// Here the multiple overloads come from multiple bases.
+
+interface I<T> {
+    foo(x: number): T;
+}
+
+interface A extends I<number>, I<string> { }
+
+var x: A;
+// BUG 822524
+var r = x.foo(1); // no error
+var r2 = x.foo(''); // error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Normally it is an error to have multiple overloads which differ only by return type in a single type declaration.
+// Here the multiple overloads come from multiple bases.
+
+interface I<T> {
+  foo(x: number): T
+}
+
+interface A extends I<number>, I<string> {}
+
+var x: A;
+// BUG 822524
+var r = x.foo(1); // no error
+var r2 = x.foo(\\"\\"); // error
+"
+`;
+
+exports[`callSignaturesThatDifferOnlyByReturnType3.ts 1`] = `
+"// Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+// Here the multiple overloads come from multiple merged declarations.
+
+interface I {
+    (x: string): string;
+}
+
+interface I {
+    (x: string): number;
+}
+
+interface I2<T> {
+    (x: string): string;
+}
+
+interface I2<T> {
+    (x: string): number;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+// Here the multiple overloads come from multiple merged declarations.
+
+interface I {
+  (x: string): string
+}
+
+interface I {
+  (x: string): number
+}
+
+interface I2<T> {
+  (x: string): string
+}
+
+interface I2<T> {
+  (x: string): number
+}
+"
+`;
+
+exports[`callSignaturesWithOptionalParameters.ts 1`] = `
+"// Optional parameters should be valid in all the below casts
+
+function foo(x?: number) { }
+var f = function foo(x?: number) { }
+var f2 = (x: number, y?: number) => { }
+
+foo(1);
+foo();
+f(1);
+f();
+f2(1);
+f2(1, 2);
+
+class C {
+    foo(x?: number) { }
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+interface I {
+    (x?: number);
+    foo(x: number, y?: number);
+}
+
+var i: I;
+i();
+i(1);
+i.foo(1);
+i.foo(1, 2);
+
+var a: {
+    (x?: number);
+    foo(x?: number);
+}
+
+a();
+a(1);
+a.foo();
+a.foo(1);
+
+var b = {
+    foo(x?: number) { },
+    a: function foo(x: number, y?: number) { },
+    b: (x?: number) => { }
+}
+
+b.foo();
+b.foo(1);
+b.a(1);
+b.a(1, 2);
+b.b();
+b.b(1);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Optional parameters should be valid in all the below casts
+
+function foo(x?: number) {}
+var f = function foo(x?: number) {};
+var f2 = (x: number, y?: number) => {};
+
+foo(1);
+foo();
+f(1);
+f();
+f2(1);
+f2(1, 2);
+
+class C {
+  foo(x?: number) {}
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+interface I {
+  (x?: number),
+  foo(x: number, y?: number)
+}
+
+var i: I;
+i();
+i(1);
+i.foo(1);
+i.foo(1, 2);
+
+var a: {
+  (x?: number),
+  foo(x?: number)
+};
+
+a();
+a(1);
+a.foo();
+a.foo(1);
+
+var b = {
+  foo(x?: number) {},
+  a: function foo(x: number, y?: number) {},
+  b: (x?: number) => {}
+};
+
+b.foo();
+b.foo(1);
+b.a(1);
+b.a(1, 2);
+b.b();
+b.b(1);
+"
+`;
+
+exports[`callSignaturesWithOptionalParameters2.ts 1`] = `
+"// Optional parameters should be valid in all the below casts
+
+function foo(x?: number);
+function foo(x?: number) { }
+
+foo(1);
+foo();
+
+function foo2(x: number);
+function foo2(x: number, y?: number);
+function foo2(x: number, y?: number) { }
+
+foo2(1);
+foo2(1, 2);
+
+class C {
+    foo(x?: number);
+    foo(x?: number) { }
+
+    foo2(x: number);
+    foo2(x: number, y?: number);
+    foo2(x: number, y?: number) { }
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+c.foo2(1);
+c.foo2(1, 2);
+
+interface I {
+    (x?: number);
+    (x?: number, y?: number);
+    foo(x: number, y?: number);
+    foo(x: number, y?: number, z?: number);
+}
+
+var i: I;
+i();
+i(1);
+i(1, 2);
+i.foo(1);
+i.foo(1, 2);
+i.foo(1, 2, 3);
+
+var a: {
+    (x?: number);
+    (x?: number, y?: number);
+    foo(x: number, y?: number);
+    foo(x: number, y?: number, z?: number);
+}
+
+a();
+a(1);
+a(1, 2);
+a.foo(1);
+a.foo(1, 2);
+a.foo(1, 2, 3);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Optional parameters should be valid in all the below casts
+
+function foo(x?: number) 
+function foo(x?: number) {}
+
+foo(1);
+foo();
+
+function foo2(x: number) 
+function foo2(x: number, y?: number) 
+function foo2(x: number, y?: number) {}
+
+foo2(1);
+foo2(1, 2);
+
+class C {
+  foo(x?: number) 
+  foo(x?: number) {}
+
+  foo2(x: number) 
+  foo2(x: number, y?: number) 
+  foo2(x: number, y?: number) {}
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+c.foo2(1);
+c.foo2(1, 2);
+
+interface I {
+  (x?: number),
+  (x?: number, y?: number),
+  foo(x: number, y?: number),
+  foo(x: number, y?: number, z?: number)
+}
+
+var i: I;
+i();
+i(1);
+i(1, 2);
+i.foo(1);
+i.foo(1, 2);
+i.foo(1, 2, 3);
+
+var a: {
+  (x?: number),
+  (x?: number, y?: number),
+  foo(x: number, y?: number),
+  foo(x: number, y?: number, z?: number)
+};
+
+a();
+a(1);
+a(1, 2);
+a.foo(1);
+a.foo(1, 2);
+a.foo(1, 2, 3);
+"
+`;
+
+exports[`callSignaturesWithParameterInitializers.ts 1`] = `
+"// Optional parameters allow initializers only in implementation signatures
+
+function foo(x = 1) { }
+var f = function foo(x = 1) { }
+var f2 = (x: number, y = 1) => { }
+
+foo(1);
+foo();
+f(1);
+f();
+f2(1);
+f2(1, 2);
+
+class C {
+    foo(x = 1) { }
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+// these are errors
+interface I {
+    (x = 1);
+    foo(x: number, y = 1);
+}
+
+var i: I;
+i();
+i(1);
+i.foo(1);
+i.foo(1, 2);
+
+// these are errors
+var a: {
+    (x = 1);
+    foo(x = 1);
+}
+
+a();
+a(1);
+a.foo();
+a.foo(1);
+
+var b = {
+    foo(x = 1) { },
+    a: function foo(x: number, y = 1) { },
+    b: (x = 1) => { }
+}
+
+b.foo();
+b.foo(1);
+b.a(1);
+b.a(1, 2);
+b.b();
+b.b(1);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Optional parameters allow initializers only in implementation signatures
+
+function foo(x = 1) {}
+var f = function foo(x = 1) {};
+var f2 = (x: number, y = 1) => {};
+
+foo(1);
+foo();
+f(1);
+f();
+f2(1);
+f2(1, 2);
+
+class C {
+  foo(x = 1) {}
+}
+
+var c: C;
+c.foo();
+c.foo(1);
+
+// these are errors
+interface I {
+  (x = 1),
+  foo(x: number, y = 1)
+}
+
+var i: I;
+i();
+i(1);
+i.foo(1);
+i.foo(1, 2);
+
+// these are errors
+var a: {
+  (x = 1),
+  foo(x = 1)
+};
+
+a();
+a(1);
+a.foo();
+a.foo(1);
+
+var b = {
+  foo(x = 1) {},
+  a: function foo(x: number, y = 1) {},
+  b: (x = 1) => {}
+};
+
+b.foo();
+b.foo(1);
+b.a(1);
+b.a(1, 2);
+b.b();
+b.b(1);
+"
+`;
+
+exports[`constructSignatureWithAccessibilityModifiersOnParameters.ts 1`] = `
+"// Parameter properties are only valid in constructor definitions, not even in other forms of construct signatures
+
+class C {
+    constructor(public x, private y) { }
+}
+
+class C2 {
+    constructor(public x) { }
+}
+
+class C3 {
+    constructor(private x) { }
+}
+
+interface I {
+    new (public x);
+}
+
+interface I2 {
+    new (private x);
+}
+
+var a: {
+    new (public x);
+}
+
+var b: {
+    new (private x);
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Parameter properties are only valid in constructor definitions, not even in other forms of construct signatures
+
+class C {
+  constructor(public x, private y) {}
+}
+
+class C2 {
+  constructor(public x) {}
+}
+
+class C3 {
+  constructor(private x) {}
+}
+
+interface I {
+  new (public x)
+}
+
+interface I2 {
+  new (private x)
+}
+
+var a: {
+  new (public x)
+};
+
+var b: {
+  new (private x)
+};
+"
+`;
+
+exports[`constructSignatureWithAccessibilityModifiersOnParameters2.ts 1`] = `
+"// Parameter properties are not valid in overloads of constructors
+
+class C {
+    constructor(public x, private y);
+    constructor(public x, private y) { }
+}
+
+class C2 {
+    constructor(private x);
+    constructor(public x) { }
+}
+
+class C3 {
+    constructor(private x);
+    constructor(private y) { }
+}
+
+interface I {
+    new (public x);
+    new (public x);
+}
+
+interface I2 {
+    new (private x);
+    new (private x);
+}
+
+var a: {
+    new (public x);
+    new (public y);
+}
+
+var b: {
+    new (private x);
+    new (private y);
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Parameter properties are not valid in overloads of constructors
+
+class C {
+  constructor(public x, private y) 
+  constructor(public x, private y) {}
+}
+
+class C2 {
+  constructor(private x) 
+  constructor(public x) {}
+}
+
+class C3 {
+  constructor(private x) 
+  constructor(private y) {}
+}
+
+interface I {
+  new (public x),
+  new (public x)
+}
+
+interface I2 {
+  new (private x),
+  new (private x)
+}
+
+var a: {
+  new (public x),
+  new (public y)
+};
+
+var b: {
+  new (private x),
+  new (private y)
+};
+"
+`;
+
+exports[`identicalCallSignatures.ts 1`] = `
+"// Each pair of call signatures in these types have a duplicate signature error.
+// Identical call signatures should generate an error.
+interface I {
+    (x): number;
+    (x: any): number;
+    <T>(x: T): T;
+    <U>(x: U): U; // error
+}
+
+interface I2<T> {
+    (x: T): T;
+    (x: T): T; // error
+}
+
+var a: {
+    (x): number;
+    (x: any): number;
+    <T>(x: T): T;
+    <T>(x: T): T; // error
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Each pair of call signatures in these types have a duplicate signature error.
+// Identical call signatures should generate an error.
+interface I {
+  (x): number,
+  (x: any): number,
+  <T>(x: T): T,
+  <U>(
+    x: U
+  ): U // error
+}
+
+interface I2<T> {
+  (x: T): T,
+  (
+    x: T
+  ): T // error
+}
+
+var a: {
+  (x): number,
+  (x: any): number,
+  <T>(x: T): T,
+  <T>(x: T): T
+}; // error
+"
+`;
+
+exports[`identicalCallSignatures2.ts 1`] = `
+"// Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+// Here the multiple overloads come from multiple bases.
+
+interface Base<T> {
+    (x: number): string;
+}
+
+interface I extends Base<string>, Base<number> { }
+
+interface I2<T> extends Base<string>, Base<number> { }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+// Here the multiple overloads come from multiple bases.
+
+interface Base<T> {
+  (x: number): string
+}
+
+interface I extends Base<string>, Base<number> {}
+
+interface I2<T> extends Base<string>, Base<number> {}
+"
+`;
+
+exports[`identicalCallSignatures3.ts 1`] = `
+"// Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+// Here the multiple overloads come from multiple merged declarations, so we do not report errors.
+
+interface I {
+    (x: number): string;
+}
+
+interface I {
+    (x: number): string;
+}
+
+interface I2<T> {
+    (x: number): string;
+}
+
+interface I2<T> {
+    (x: number): string;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+// Here the multiple overloads come from multiple merged declarations, so we do not report errors.
+
+interface I {
+  (x: number): string
+}
+
+interface I {
+  (x: number): string
+}
+
+interface I2<T> {
+  (x: number): string
+}
+
+interface I2<T> {
+  (x: number): string
+}
+"
+`;
+
+exports[`restParameterWithoutAnnotationIsAnyArray.ts 1`] = `
+"// Rest parameters without type annotations are 'any', errors only for the functions with 2 rest params
+
+function foo(...x) { }
+var f = function foo(...x) { }
+var f2 = (...x, ...y) => { }
+
+class C {
+    foo(...x) { }
+}
+
+interface I {
+    (...x);
+    foo(...x, ...y);
+}
+
+var a: {
+    (...x);
+    foo(...x);
+}
+
+var b = {
+    foo(...x) { },
+    a: function foo(...x, ...y) { },
+    b: (...x) => { }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Rest parameters without type annotations are 'any', errors only for the functions with 2 rest params
+
+function foo(...x) {}
+var f = function foo(...x) {};
+var f2 = (...x, ...y) => {};
+
+class C {
+  foo(...x) {}
+}
+
+interface I {
+  (...x),
+  foo(...x, ...y)
+}
+
+var a: {
+  (...x),
+  foo(...x)
+};
+
+var b = {
+  foo(...x) {},
+  a: function foo(...x, ...y) {},
+  b: (...x) => {}
+};
+"
+`;
+
+exports[`restParametersOfNonArrayTypes.ts 1`] = `
+"// Rest parameters must be an array type if they have a type annotation, so all these are errors
+
+function foo(...x: string) { }
+var f = function foo(...x: number) { }
+var f2 = (...x: Date, ...y: boolean) => { }
+
+class C {
+    foo(...x: C) { }
+}
+
+interface I {
+    (...x: string);
+    foo(...x: number, ...y: number);
+}
+
+var a: {
+    (...x: string);
+    foo(...x: string);
+}
+
+var b = {
+    foo(...x: string) { },
+    a: function foo(...x: number, ...y: Date) { },
+    b: (...x: string) => { }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Rest parameters must be an array type if they have a type annotation, so all these are errors
+
+function foo(...x: string) {}
+var f = function foo(...x: number) {};
+var f2 = (...x: Date, ...y: boolean) => {};
+
+class C {
+  foo(...x: C) {}
+}
+
+interface I {
+  (...x: string),
+  foo(...x: number, ...y: number)
+}
+
+var a: {
+  (...x: string),
+  foo(...x: string)
+};
+
+var b = {
+  foo(...x: string) {},
+  a: function foo(...x: number, ...y: Date) {},
+  b: (...x: string) => {}
+};
+"
+`;
+
+exports[`restParametersOfNonArrayTypes2.ts 1`] = `
+"// Rest parameters must be an array type if they have a type annotation, 
+// user defined subtypes of array do not count, all of these are errors
+
+interface MyThing extends Array<any> { }
+interface MyThing2<T> extends Array<T> { }
+
+function foo(...x: MyThing) { }
+var f = function foo(...x: MyThing) { }
+var f2 = (...x: MyThing, ...y: MyThing) => { }
+
+class C {
+    foo(...x: MyThing) { }
+}
+
+interface I {
+    (...x: MyThing);
+    foo(...x: MyThing, ...y: MyThing);
+}
+
+var a: {
+    (...x: MyThing);
+    foo(...x: MyThing);
+}
+
+var b = {
+    foo(...x: MyThing) { },
+    a: function foo(...x: MyThing, ...y: MyThing) { },
+    b: (...x: MyThing) => { }
+}
+
+
+
+
+function foo2(...x: MyThing2<string>) { }
+var f3 = function foo(...x: MyThing2<string>) { }
+var f4 = (...x: MyThing2<string>, ...y: MyThing2<string>) => { }
+
+class C2 {
+    foo(...x: MyThing2<string>) { }
+}
+
+interface I2 {
+    (...x: MyThing2<string>);
+    foo(...x: MyThing2<string>, ...y: MyThing2<string>);
+}
+
+var a2: {
+    (...x: MyThing2<string>);
+    foo(...x: MyThing2<string>);
+}
+
+var b2 = {
+    foo(...x: MyThing2<string>) { },
+    a: function foo(...x: MyThing2<string>, ...y: MyThing2<string>) { },
+    b: (...x: MyThing2<string>) => { }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Rest parameters must be an array type if they have a type annotation,
+// user defined subtypes of array do not count, all of these are errors
+
+interface MyThing extends Array<any> {}
+interface MyThing2<T> extends Array<T> {}
+
+function foo(...x: MyThing) {}
+var f = function foo(...x: MyThing) {};
+var f2 = (...x: MyThing, ...y: MyThing) => {};
+
+class C {
+  foo(...x: MyThing) {}
+}
+
+interface I {
+  (...x: MyThing),
+  foo(...x: MyThing, ...y: MyThing)
+}
+
+var a: {
+  (...x: MyThing),
+  foo(...x: MyThing)
+};
+
+var b = {
+  foo(...x: MyThing) {},
+  a: function foo(...x: MyThing, ...y: MyThing) {},
+  b: (...x: MyThing) => {}
+};
+
+function foo2(...x: MyThing2<string>) {}
+var f3 = function foo(...x: MyThing2<string>) {};
+var f4 = (...x: MyThing2<string>, ...y: MyThing2<string>) => {};
+
+class C2 {
+  foo(...x: MyThing2<string>) {}
+}
+
+interface I2 {
+  (...x: MyThing2<string>),
+  foo(...x: MyThing2<string>, ...y: MyThing2<string>)
+}
+
+var a2: {
+  (...x: MyThing2<string>),
+  foo(...x: MyThing2<string>)
+};
+
+var b2 = {
+  foo(...x: MyThing2<string>) {},
+  a: function foo(...x: MyThing2<string>, ...y: MyThing2<string>) {},
+  b: (...x: MyThing2<string>) => {}
+};
+"
+`;
+
+exports[`restParametersWithArrayTypeAnnotations.ts 1`] = `
+"// Rest parameters must be an array type if they have a type annotation, errors only for the functions with 2 rest params
+
+function foo(...x: number[]) { }
+var f = function foo(...x: number[]) { }
+var f2 = (...x: number[], ...y: number[]) => { }
+
+class C {
+    foo(...x: number[]) { }
+}
+
+interface I {
+    (...x: number[]);
+    foo(...x: number[], ...y: number[]);
+}
+
+var a: {
+    (...x: number[]);
+    foo(...x: number[]);
+}
+
+var b = {
+    foo(...x: number[]) { },
+    a: function foo(...x: number[], ...y: number[]) { },
+    b: (...x: number[]) => { }
+}
+
+
+
+
+function foo2(...x: Array<string>) { }
+var f3 = function foo(...x: Array<string>) { }
+var f4 = (...x: Array<string>, ...y: Array<string>) => { }
+
+class C2 {
+    foo(...x: Array<string>) { }
+}
+
+interface I2 {
+    (...x: Array<string>);
+    foo(...x: Array<string>, ...y: Array<string>);
+}
+
+var a2: {
+    (...x: Array<string>);
+    foo(...x: Array<string>);
+}
+
+var b2 = {
+    foo(...x: Array<string>) { },
+    a: function foo(...x: Array<string>, ...y: Array<string>) { },
+    b: (...x: Array<string>) => { }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Rest parameters must be an array type if they have a type annotation, errors only for the functions with 2 rest params
+
+function foo(...x: number[]) {}
+var f = function foo(...x: number[]) {};
+var f2 = (...x: number[], ...y: number[]) => {};
+
+class C {
+  foo(...x: number[]) {}
+}
+
+interface I {
+  (...x: number[]),
+  foo(...x: number[], ...y: number[])
+}
+
+var a: {
+  (...x: number[]),
+  foo(...x: number[])
+};
+
+var b = {
+  foo(...x: number[]) {},
+  a: function foo(...x: number[], ...y: number[]) {},
+  b: (...x: number[]) => {}
+};
+
+function foo2(...x: Array<string>) {}
+var f3 = function foo(...x: Array<string>) {};
+var f4 = (...x: Array<string>, ...y: Array<string>) => {};
+
+class C2 {
+  foo(...x: Array<string>) {}
+}
+
+interface I2 {
+  (...x: Array<string>),
+  foo(...x: Array<string>, ...y: Array<string>)
+}
+
+var a2: {
+  (...x: Array<string>),
+  foo(...x: Array<string>)
+};
+
+var b2 = {
+  foo(...x: Array<string>) {},
+  a: function foo(...x: Array<string>, ...y: Array<string>) {},
+  b: (...x: Array<string>) => {}
+};
+"
+`;
+
+exports[`specializedSignatureIsNotSubtypeOfNonSpecializedSignature.ts 1`] = `
+"// @declaration: true
+
+function foo(x: 'a');
+function foo(x: number) { }
+
+class C {
+    foo(x: 'a');
+    foo(x: number);
+    foo(x: any) { }
+}
+
+class C2<T> {
+    foo(x: 'a');
+    foo(x: T);
+    foo(x: any) { }
+}
+
+class C3<T extends String> {
+    foo(x: 'a');
+    foo(x: T);
+    foo(x: any) { }
+}
+
+interface I {
+    (x: 'a');
+    (x: number);
+    foo(x: 'a');
+    foo(x: number);
+}
+
+interface I2<T> {
+    (x: 'a');
+    (x: T);
+    foo(x: 'a');
+    foo(x: T);
+}
+
+interface I3<T extends String> {
+    (x: 'a');
+    (x: T);
+    foo(x: 'a');
+    foo(x: T);
+}
+
+var a: {
+    (x: 'a');
+    (x: number);
+    foo(x: 'a');
+    foo(x: number);
+}
+
+var a2: {
+    (x: 'a');
+    <T>(x: T);
+    foo(x: 'a');
+    foo<T>(x: T);
+}
+
+var a3: {
+    (x: 'a');
+    <T>(x: T);
+    foo(x: 'a');
+    foo<T extends String>(x: T);
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+
+function foo(x: \\"a\\") 
+function foo(x: number) {}
+
+class C {
+  foo(x: \\"a\\") 
+  foo(x: number) 
+  foo(x: any) {}
+}
+
+class C2<T> {
+  foo(x: \\"a\\") 
+  foo(x: T) 
+  foo(x: any) {}
+}
+
+class C3<T extends String> {
+  foo(x: \\"a\\") 
+  foo(x: T) 
+  foo(x: any) {}
+}
+
+interface I {
+  (x: \\"a\\"),
+  (x: number),
+  foo(x: \\"a\\"),
+  foo(x: number)
+}
+
+interface I2<T> {
+  (x: \\"a\\"),
+  (x: T),
+  foo(x: \\"a\\"),
+  foo(x: T)
+}
+
+interface I3<T extends String> {
+  (x: \\"a\\"),
+  (x: T),
+  foo(x: \\"a\\"),
+  foo(x: T)
+}
+
+var a: {
+  (x: \\"a\\"),
+  (x: number),
+  foo(x: \\"a\\"),
+  foo(x: number)
+};
+
+var a2: {
+  (x: \\"a\\"),
+  <T>(x: T),
+  foo(x: \\"a\\"),
+  foo<T>(x: T)
+};
+
+var a3: {
+  (x: \\"a\\"),
+  <T>(x: T),
+  foo(x: \\"a\\"),
+  foo<T extends String>(x: T)
+};
+"
+`;
+
+exports[`specializedSignatureIsSubtypeOfNonSpecializedSignature.ts 1`] = `
+"// Specialized signatures must be a subtype of a non-specialized signature
+// All the below should not be errors
+
+function foo(x: 'a');
+function foo(x: string);
+function foo(x: any) { }
+
+class C {
+    foo(x: 'a');
+    foo(x: string);
+    foo(x: any) { }
+}
+
+class C2<T> {
+    foo(x: 'a');
+    foo(x: string);
+    foo(x: T);
+    foo(x: any) { }
+}
+
+class C3<T extends String> {
+    foo(x: 'a');
+    foo(x: string);
+    foo(x: T);
+    foo(x: any) { }
+}
+
+interface I {
+    (x: 'a');
+    (x: number);
+    (x: string);
+    foo(x: 'a');
+    foo(x: string);
+    foo(x: number);
+}
+
+interface I2<T> {
+    (x: 'a');
+    (x: T);
+    (x: string);
+    foo(x: 'a');
+    foo(x: string);
+    foo(x: T);
+}
+
+interface I3<T extends String> {
+    (x: 'a');
+    (x: string);
+    (x: T);
+    foo(x: 'a');
+    foo(x: string);
+    foo(x: T);
+}
+
+var a: {
+    (x: string);
+    (x: 'a');
+    (x: number);
+    foo(x: string);
+    foo(x: 'a');
+    foo(x: number);
+}
+
+var a2: {
+    (x: 'a');
+    (x: string);
+    <T>(x: T);
+    foo(x: string);
+    foo(x: 'a');
+    foo<T>(x: T);
+}
+
+var a3: {
+    (x: 'a');
+    <T>(x: T);
+    (x: string);
+    foo(x: string);
+    foo(x: 'a');
+    foo<T extends String>(x: T);
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Specialized signatures must be a subtype of a non-specialized signature
+// All the below should not be errors
+
+function foo(x: \\"a\\") 
+function foo(x: string) 
+function foo(x: any) {}
+
+class C {
+  foo(x: \\"a\\") 
+  foo(x: string) 
+  foo(x: any) {}
+}
+
+class C2<T> {
+  foo(x: \\"a\\") 
+  foo(x: string) 
+  foo(x: T) 
+  foo(x: any) {}
+}
+
+class C3<T extends String> {
+  foo(x: \\"a\\") 
+  foo(x: string) 
+  foo(x: T) 
+  foo(x: any) {}
+}
+
+interface I {
+  (x: \\"a\\"),
+  (x: number),
+  (x: string),
+  foo(x: \\"a\\"),
+  foo(x: string),
+  foo(x: number)
+}
+
+interface I2<T> {
+  (x: \\"a\\"),
+  (x: T),
+  (x: string),
+  foo(x: \\"a\\"),
+  foo(x: string),
+  foo(x: T)
+}
+
+interface I3<T extends String> {
+  (x: \\"a\\"),
+  (x: string),
+  (x: T),
+  foo(x: \\"a\\"),
+  foo(x: string),
+  foo(x: T)
+}
+
+var a: {
+  (x: string),
+  (x: \\"a\\"),
+  (x: number),
+  foo(x: string),
+  foo(x: \\"a\\"),
+  foo(x: number)
+};
+
+var a2: {
+  (x: \\"a\\"),
+  (x: string),
+  <T>(x: T),
+  foo(x: string),
+  foo(x: \\"a\\"),
+  foo<T>(x: T)
+};
+
+var a3: {
+  (x: \\"a\\"),
+  <T>(x: T),
+  (x: string),
+  foo(x: string),
+  foo(x: \\"a\\"),
+  foo<T extends String>(x: T)
+};
+"
+`;
+
+exports[`specializedSignatureWithOptional.ts 1`] = `
+"declare function f(x?: \\"hi\\"): void;
+declare function f(x?: string): void;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+declare function f(x?: \\"hi\\"): void 
+declare function f(x?: string): void 
+"
+`;
+
+exports[`stringLiteralTypesInImplementationSignatures.ts 1`] = `
+"// String literal types are only valid in overload signatures
+
+function foo(x: 'hi') { }
+var f = function foo(x: 'hi') { }
+var f2 = (x: 'hi', y: 'hi') => { }
+
+class C {
+    foo(x: 'hi') { }
+}
+
+interface I {
+    (x: 'hi');
+    foo(x: 'hi', y: 'hi');
+}
+
+var a: {
+    (x: 'hi');
+    foo(x: 'hi');
+}
+
+var b = {
+    foo(x: 'hi') { },
+    a: function foo(x: 'hi', y: 'hi') { },
+    b: (x: 'hi') => { }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// String literal types are only valid in overload signatures
+
+function foo(x: \\"hi\\") {}
+var f = function foo(x: \\"hi\\") {};
+var f2 = (x: \\"hi\\", y: \\"hi\\") => {};
+
+class C {
+  foo(x: \\"hi\\") {}
+}
+
+interface I {
+  (x: \\"hi\\"),
+  foo(x: \\"hi\\", y: \\"hi\\")
+}
+
+var a: {
+  (x: \\"hi\\"),
+  foo(x: \\"hi\\")
+};
+
+var b = {
+  foo(x: \\"hi\\") {},
+  a: function foo(x: \\"hi\\", y: \\"hi\\") {},
+  b: (x: \\"hi\\") => {}
+};
+"
+`;
+
+exports[`stringLiteralTypesInImplementationSignatures2.ts 1`] = `
+"// String literal types are only valid in overload signatures
+
+function foo(x: any);
+function foo(x: 'hi') { }
+
+class C {
+    foo(x: string);
+    foo(x: 'hi') { }
+}
+
+interface I {
+    (x: 'a');
+    (x: 'hi');
+    foo(x: 'a', y: 'a');
+    foo(x: 'hi', y: 'hi');
+}
+
+var a: {
+    (x: 'hi');
+    (x: 'a');
+    foo(x: 'hi');
+    foo(x: 'a');
+}
+
+var b = {
+    foo(x: 'hi') { },
+    foo(x: 'a') { },
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// String literal types are only valid in overload signatures
+
+function foo(x: any) 
+function foo(x: \\"hi\\") {}
+
+class C {
+  foo(x: string) 
+  foo(x: \\"hi\\") {}
+}
+
+interface I {
+  (x: \\"a\\"),
+  (x: \\"hi\\"),
+  foo(x: \\"a\\", y: \\"a\\"),
+  foo(x: \\"hi\\", y: \\"hi\\")
+}
+
+var a: {
+  (x: \\"hi\\"),
+  (x: \\"a\\"),
+  foo(x: \\"hi\\"),
+  foo(x: \\"a\\")
+};
+
+var b = {
+  foo(x: \\"hi\\") {},
+  foo(x: \\"a\\") {}
+};
+"
+`;
+
+exports[`typeParameterAsTypeArgument.ts 1`] = `
+"// These are all errors because type parameters cannot reference other type parameters from the same list
+
+function foo<T, U>(x: T, y: U) {
+    foo<U, U>(y, y);
+    return new C<U,T>();
+}
+
+class C<T, U> {
+    x: T;
+}
+
+interface I<T, U> {
+    x: C<U, T>;
+}
+
+//function foo<T, U extends T>(x: T, y: U) {
+//    foo<U, U>(y, y);
+//    return new C<U, T>();
+//}
+
+//class C<T extends U, U> {
+//    x: T;
+//}
+
+//interface I<T, U extends T> {
+//    x: C<U, T>;
+//}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// These are all errors because type parameters cannot reference other type parameters from the same list
+
+function foo<T, U>(x: T, y: U) {
+  foo<U, U>(y, y);
+  return new C<U, T>();
+}
+
+class C<T, U> {
+  x: T;
+}
+
+interface I<T, U> {
+  x: C<U, T>
+}
+
+//function foo<T, U extends T>(x: T, y: U) {
+//    foo<U, U>(y, y);
+//    return new C<U, T>();
+//}
+
+//class C<T extends U, U> {
+//    x: T;
+//}
+
+//interface I<T, U extends T> {
+//    x: C<U, T>;
+//}
+"
+`;
+
+exports[`typeParameterUsedAsTypeParameterConstraint.ts 1`] = `
+"// Type parameters are in scope in their own and other type parameter lists
+
+function foo<T, U extends T>(x: T, y: U): T {
+    x = y;
+    return y;
+}
+
+function foo2<U extends T, T>(x: T, y: U): T {
+    x = y;
+    return y;
+}
+
+var f = function <T, U extends T>(x: T, y: U): T {
+    x = y;
+    return y;
+}
+
+var f2 = function <U extends T, T>(x: T, y: U): T {
+    x = y;
+    return y;
+}
+
+var f3 = <T, U extends T>(x: T, y: U): T => {
+    x = y;
+    return y;
+}
+
+var f4 = <U extends T, T>(x: T, y: U): T => {
+    x = y;
+    return y;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Type parameters are in scope in their own and other type parameter lists
+
+function foo<T, U extends T>(x: T, y: U): T {
+  x = y;
+  return y;
+}
+
+function foo2<U extends T, T>(x: T, y: U): T {
+  x = y;
+  return y;
+}
+
+var f = function<T, U extends T>(x: T, y: U): T {
+  x = y;
+  return y;
+};
+
+var f2 = function<U extends T, T>(x: T, y: U): T {
+  x = y;
+  return y;
+};
+
+var f3 = <T, U extends T>(x: T, y: U): T => {
+  x = y;
+  return y;
+};
+
+var f4 = <U extends T, T>(x: T, y: U): T => {
+  x = y;
+  return y;
+};
+"
+`;
+
+exports[`typeParameterUsedAsTypeParameterConstraint2.ts 1`] = `
+"// Type parameters are in scope in their own and other type parameter lists
+// Nested local functions
+
+function foo<T, U extends T>(x: T, y: U) {
+    function bar<V extends T, W extends U>() {
+        function baz<X extends W, Y extends V>(a: X, b: Y): T {
+            x = y;
+            return y;
+        }
+    }
+}
+
+function foo2<U extends T, T>(x: T, y: U) {
+    function bar<V extends T, W extends U>() {
+        function baz<X extends W, Y extends V>(a: X, b: Y): T {
+            x = y;
+            return y;
+        }
+    }
+}
+
+var f = function <T, U extends T>(x: T, y: U) {
+    function bar<V extends T, W extends U>() {
+        var g = function <X extends W, Y extends V>(a: X, b: Y): T {
+            x = y;
+            return y;
+        }
+    }
+}
+
+var f2 = function <U extends T, T>(x: T, y: U) {
+    function bar<V extends T, W extends U>() {
+        var g = function baz<X extends W, Y extends V>(a: X, b: Y): T {
+            x = y;
+            return y;
+        }
+    }
+}
+
+var f3 = <T, U extends T>(x: T, y: U) => {
+    function bar<V extends T, W extends U>() {
+        var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+            x = y;
+            return y;
+        }
+    }
+}
+
+var f4 = <U extends T, T>(x: T, y: U) => {
+    function bar<V extends T, W extends U>() {
+        var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+            x = y;
+            return y;
+        }
+    }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Type parameters are in scope in their own and other type parameter lists
+// Nested local functions
+
+function foo<T, U extends T>(x: T, y: U) {
+  function bar<V extends T, W extends U>() {
+    function baz<X extends W, Y extends V>(a: X, b: Y): T {
+      x = y;
+      return y;
+    }
+  }
+}
+
+function foo2<U extends T, T>(x: T, y: U) {
+  function bar<V extends T, W extends U>() {
+    function baz<X extends W, Y extends V>(a: X, b: Y): T {
+      x = y;
+      return y;
+    }
+  }
+}
+
+var f = function<T, U extends T>(x: T, y: U) {
+  function bar<V extends T, W extends U>() {
+    var g = function<X extends W, Y extends V>(a: X, b: Y): T {
+      x = y;
+      return y;
+    };
+  }
+};
+
+var f2 = function<U extends T, T>(x: T, y: U) {
+  function bar<V extends T, W extends U>() {
+    var g = function baz<X extends W, Y extends V>(a: X, b: Y): T {
+      x = y;
+      return y;
+    };
+  }
+};
+
+var f3 = <T, U extends T>(x: T, y: U) => {
+  function bar<V extends T, W extends U>() {
+    var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+      x = y;
+      return y;
+    };
+  }
+};
+
+var f4 = <U extends T, T>(x: T, y: U) => {
+  function bar<V extends T, W extends U>() {
+    var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+      x = y;
+      return y;
+    };
+  }
+};
+"
+`;
+
+exports[`typeParameterUsedAsTypeParameterConstraint3.ts 1`] = `
+"// Type parameters are in scope in their own and other type parameter lists
+// Object types
+
+//class C<T, U extends T, V extends U> {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T {
+//        var r: T;
+//        return x;
+//    }
+//}
+
+//class C2<V extends U, T, U extends T> {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T {
+//        var r: T;
+//        return x;
+//    }
+//}
+
+interface I<T, U, V> {
+    x: T;
+    y: U;
+    z: V;
+    foo<W extends V>(x: W): T;
+}
+
+interface I2<V, T, U> {
+    x: T;
+    y: U;
+    z: V;
+    foo<W extends V>(x: W): T;
+}
+
+//interface I < T, U extends T, V extends U > {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T;
+//}
+
+//interface I2<V extends U, T, U extends T> {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T;
+//}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Type parameters are in scope in their own and other type parameter lists
+// Object types
+
+//class C<T, U extends T, V extends U> {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T {
+//        var r: T;
+//        return x;
+//    }
+//}
+
+//class C2<V extends U, T, U extends T> {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T {
+//        var r: T;
+//        return x;
+//    }
+//}
+
+interface I<T, U, V> {
+  x: T,
+  y: U,
+  z: V,
+  foo<W extends V>(x: W): T
+}
+
+interface I2<V, T, U> {
+  x: T,
+  y: U,
+  z: V,
+  foo<W extends V>(x: W): T
+}
+
+//interface I < T, U extends T, V extends U > {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T;
+//}
+
+//interface I2<V extends U, T, U extends T> {
+//    x: T;
+//    y: U;
+//    z: V;
+//    foo<W extends V>(x: W): T;
+//}
+"
+`;
+
+exports[`typeParameterUsedAsTypeParameterConstraint4.ts 1`] = `
+"// Type parameters are in scope in their own and other type parameter lists
+// Some negative cases
+
+class C<T, U extends T, V extends U> {
+    z: W; // error
+    foo<W extends V>(x: W): T {
+        var r: T;
+        return x;
+    }
+}
+
+interface I<T, U extends T, V extends U> {
+    x: T;
+    y: U;
+    z: W; // error
+    foo<W extends V>(x: W): T;
+}
+
+function foo<T, U extends T>(x: T, y: U): V { // error
+    function bar<V extends T, W extends U>(): X { // error
+        function baz<X extends W, Y extends V>(a: X, b: Y): T {
+            x = y;
+            return y;
+        }
+    }
+}
+
+function foo2<U extends T, T>(x: T, y: U): W { // error
+    function bar<V extends T, W extends U>(): Y { // error
+        function baz<X extends W, Y extends V>(a: X, b: Y): T {
+            x = y;
+            return y;
+        }
+    }
+}
+
+var f3 = <T, U extends T>(x: T, y: U) => {
+    function bar<V extends T, W extends U>(r: X, s: Y) { // error
+        var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+            x = y;
+            return y;
+        }
+    }
+}
+
+var f4 = <U extends T, T>(x: V, y: X) => { // error
+    function bar<V extends T, W extends U>() {
+        var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+            x = y;
+            return y;
+        }
+    }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Type parameters are in scope in their own and other type parameter lists
+// Some negative cases
+
+class C<T, U extends T, V extends U> {
+  z: W; // error
+  foo<W extends V>(x: W): T {
+    var r: T;
+    return x;
+  }
+}
+
+interface I<T, U extends T, V extends U> {
+  x: T,
+  y: U,
+  z: W, // error
+  foo<W extends V>(x: W): T
+}
+
+function foo<T, U extends T>(x: T, y: U): V {
+  // error
+  function bar<V extends T, W extends U>(): X {
+    // error
+    function baz<X extends W, Y extends V>(a: X, b: Y): T {
+      x = y;
+      return y;
+    }
+  }
+}
+
+function foo2<U extends T, T>(x: T, y: U): W {
+  // error
+  function bar<V extends T, W extends U>(): Y {
+    // error
+    function baz<X extends W, Y extends V>(a: X, b: Y): T {
+      x = y;
+      return y;
+    }
+  }
+}
+
+var f3 = <T, U extends T>(x: T, y: U) => {
+  function bar<V extends T, W extends U>(r: X, s: Y) {
+    // error
+    var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+      x = y;
+      return y;
+    };
+  }
+};
+
+var f4 = <U extends T, T>(x: V, y: X) => {
+  // error
+  function bar<V extends T, W extends U>() {
+    var g = <X extends W, Y extends V>(a: X, b: Y): T => {
+      x = y;
+      return y;
+    };
+  }
+};
+"
+`;

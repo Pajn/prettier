@@ -1,0 +1,1907 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`contextualThisType.ts 1`] = `
+"interface X {
+    a: (p: this) => this;
+}
+
+interface Y extends X {
+}
+
+var x: Y = {
+    a(p) {
+        return p;
+    }
+}
+
+var y = x.a(x);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface X {
+  a: (p: this) => this
+}
+
+interface Y extends X {}
+
+var x: Y = {
+  a(p) {
+    return p;
+  }
+};
+
+var y = x.a(x);
+"
+`;
+
+exports[`declarationFiles.ts 1`] = `
+"// @declaration: true
+
+class C1 {
+    x: this;
+    f(x: this): this { return undefined; }
+    constructor(x: this) { }
+}
+
+class C2 {
+    [x: string]: this;
+}
+
+interface Foo<T> {
+    x: T;
+    y: this;
+}
+
+class C3 {
+    a: this[];
+    b: [this, this];
+    c: this | Date;
+    d: this & Date;
+    e: (((this)));
+    f: (x: this) => this;
+    g: new (x: this) => this;
+    h: Foo<this>;
+    i: Foo<this | (() => this)>;
+    j: (x: any) => x is this;
+}
+
+class C4 {
+    x1 = { a: this };
+    x2 = [this];
+    x3 = [{ a: this }];
+    x4 = () => this;
+    f1() {
+        return { a: this };
+    }
+    f2() {
+        return [this];
+    }
+    f3() {
+        return [{ a: this }];
+    }
+    f4() {
+        return () => this;
+    }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+
+class C1 {
+  x: this;
+  f(x: this): this {
+    return undefined;
+  }
+  constructor(x: this) {}
+}
+
+class C2 {
+  [x: string]: this
+}
+
+interface Foo<T> {
+  x: T,
+  y: this
+}
+
+class C3 {
+  a: this[];
+  b: [this, this];
+  c: this | Date;
+  d: this & Date;
+  e: (((this)));
+  f: (x: this) => this;
+  g: new (x: this) => this;
+  h: Foo<this>;
+  i: Foo<this | (() => this)>;
+  j: (x: any) => x is this;
+}
+
+class C4 {
+  x1 = { a: this };
+  x2 = [this];
+  x3 = [{ a: this }];
+  x4 = () => this;
+  f1() {
+    return { a: this };
+  }
+  f2() {
+    return [this];
+  }
+  f3() {
+    return [{ a: this }];
+  }
+  f4() {
+    return () => this;
+  }
+}
+"
+`;
+
+exports[`fluentClasses.ts 1`] = `
+"class A {
+    foo() {
+        return this;
+    }
+}
+class B extends A {
+    bar() {
+        return this;
+    }
+}
+class C extends B {
+    baz() {
+        return this;
+    }
+}
+var c: C;
+var z = c.foo().bar().baz();  // Fluent pattern
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class A {
+  foo() {
+    return this;
+  }
+}
+class B extends A {
+  bar() {
+    return this;
+  }
+}
+class C extends B {
+  baz() {
+    return this;
+  }
+}
+var c: C;
+var z = c.foo().bar().baz(); // Fluent pattern
+"
+`;
+
+exports[`fluentInterfaces.ts 1`] = `
+"interface A {
+    foo(): this;
+}
+interface B extends A {
+    bar(): this;
+}
+interface C extends B {
+    baz(): this;
+}
+var c: C;
+var z = c.foo().bar().baz();  // Fluent pattern
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface A {
+  foo(): this
+}
+interface B extends A {
+  bar(): this
+}
+interface C extends B {
+  baz(): this
+}
+var c: C;
+var z = c.foo().bar().baz(); // Fluent pattern
+"
+`;
+
+exports[`looseThisTypeInFunctions.ts 1`] = `
+"// @noImplicitAny: true
+// @noImplicitThis: true
+
+interface I {
+    n: number;
+    explicitThis(this: this, m: number): number;
+}
+interface Unused {
+    implicitNoThis(m: number): number;
+}
+class C implements I {
+    n: number;
+    explicitThis(this: this, m: number): number {
+        return this.n + m;
+    }
+    implicitThis(m: number): number {
+        return this.n + m;
+    }
+    explicitVoid(this: void, m: number): number {
+        return m + 1;
+    }
+}
+let c = new C();
+c.explicitVoid = c.explicitThis; // error, 'void' is missing everything
+let o = {
+    n: 101,
+    explicitThis: function (m: number) {
+        return m + this.n.length; // error, 'length' does not exist on 'number'
+    },
+    implicitThis(m: number): number { return m; }
+};
+let i: I = o;
+let o2: I = {
+    n: 1001,
+    explicitThis: function (m) {
+         return m + this.n.length;  // error, this.n: number, no member 'length'
+    },
+}
+let x = i.explicitThis;
+let n = x(12); // callee:void doesn't match this:I
+let u: Unused;
+let y = u.implicitNoThis;
+n = y(12); // ok, callee:void matches this:any
+c.explicitVoid = c.implicitThis // ok, implicitThis(this:any)
+o.implicitThis = c.implicitThis; // ok, implicitThis(this:any)
+o.implicitThis = c.explicitThis; // ok, implicitThis(this:any) is assignable to explicitThis(this: this)
+o.implicitThis = i.explicitThis;
+i.explicitThis = function(m) {
+     return this.n.length;  // error, this.n: number
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @noImplicitAny: true
+// @noImplicitThis: true
+
+interface I {
+  n: number,
+  explicitThis(this: this, m: number): number
+}
+interface Unused {
+  implicitNoThis(m: number): number
+}
+class C implements I {
+  n: number;
+  explicitThis(this: this, m: number): number {
+    return this.n + m;
+  }
+  implicitThis(m: number): number {
+    return this.n + m;
+  }
+  explicitVoid(this: void, m: number): number {
+    return m + 1;
+  }
+}
+let c = new C();
+c.explicitVoid = c.explicitThis; // error, 'void' is missing everything
+let o = {
+  n: 101,
+  explicitThis: function(m: number) {
+    return m + this.n.length; // error, 'length' does not exist on 'number'
+  },
+  implicitThis(m: number): number {
+    return m;
+  }
+};
+let i: I = o;
+let o2: I = {
+  n: 1001,
+  explicitThis: function(m) {
+    return m + this.n.length; // error, this.n: number, no member 'length'
+  }
+};
+let x = i.explicitThis;
+let n = x(12); // callee:void doesn't match this:I
+let u: Unused;
+let y = u.implicitNoThis;
+n = y(12); // ok, callee:void matches this:any
+c.explicitVoid = c.implicitThis; // ok, implicitThis(this:any)
+o.implicitThis = c.implicitThis; // ok, implicitThis(this:any)
+o.implicitThis = c.explicitThis; // ok, implicitThis(this:any) is assignable to explicitThis(this: this)
+o.implicitThis = i.explicitThis;
+i.explicitThis = function(m) {
+  return this.n.length; // error, this.n: number
+};
+"
+`;
+
+exports[`thisTypeAndConstraints.ts 1`] = `
+"class A {
+    self() {
+        return this;
+    }
+}
+
+function f<T extends A>(x: T) {
+    function g<U extends T>(x: U) {
+        x = x.self();
+    }
+    x = x.self();
+}
+
+class B<T extends A> {
+    foo(x: T) {
+        x = x.self();
+    }
+    bar<U extends T>(x: U) {
+        x = x.self();
+    }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class A {
+  self() {
+    return this;
+  }
+}
+
+function f<T extends A>(x: T) {
+  function g<U extends T>(x: U) {
+    x = x.self();
+  }
+  x = x.self();
+}
+
+class B<T extends A> {
+  foo(x: T) {
+    x = x.self();
+  }
+  bar<U extends T>(x: U) {
+    x = x.self();
+  }
+}
+"
+`;
+
+exports[`thisTypeErrors2.ts 1`] = `
+"class Base {
+    constructor(a: this) {
+    }
+}
+class Generic<T> {
+}
+class Derived {
+    n: number;
+    constructor(public host: Generic<this>) {
+        let self: this = this;
+        this.n = 12;
+    }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Base {
+  constructor(a: this) {}
+}
+class Generic<T> {}
+class Derived {
+  n: number;
+  constructor(public host: Generic<this>) {
+    let self: this = this;
+    this.n = 12;
+  }
+}
+"
+`;
+
+exports[`thisTypeInAccessors.ts 1`] = `
+"// @noImplicitAny: true
+// @noImplicitThis: true
+// @target: es5
+interface Foo {
+    n: number;
+    x: number;
+}
+
+const explicit = {
+    n: 12,
+    get x(this: Foo): number { return this.n; },
+    set x(this: Foo, n: number) { this.n = n; }
+}
+const copiedFromGetter = {
+    n: 14,
+    get x(this: Foo): number { return this.n; },
+    set x(n) { this.n = n; }
+}
+const copiedFromSetter = {
+    n: 15,
+    get x() { return this.n },
+    set x(this: Foo, n: number) { this.n = n; }
+}
+const copiedFromGetterUnannotated = {
+    n: 16,
+    get x(this: Foo) { return this.n },
+    set x(this, n) { this.n = n; }
+}
+
+class Explicit {
+    n = 17;
+    get x(this: Foo): number { return this.n; }
+    set x(this: Foo, n: number) { this.n = n; }
+}
+class Contextual {
+    n = 21;
+    get x() { return this.n } // inside a class, so already correct
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @noImplicitAny: true
+// @noImplicitThis: true
+// @target: es5
+interface Foo {
+  n: number,
+  x: number
+}
+
+const explicit = {
+  n: 12,
+  get x(this: Foo): number {
+    return this.n;
+  },
+  set x(this: Foo, n: number) {
+    this.n = n;
+  }
+};
+const copiedFromGetter = {
+  n: 14,
+  get x(this: Foo): number {
+    return this.n;
+  },
+  set x(n) {
+    this.n = n;
+  }
+};
+const copiedFromSetter = {
+  n: 15,
+  get x() {
+    return this.n;
+  },
+  set x(this: Foo, n: number) {
+    this.n = n;
+  }
+};
+const copiedFromGetterUnannotated = {
+  n: 16,
+  get x(this: Foo) {
+    return this.n;
+  },
+  set x(this, n) {
+    this.n = n;
+  }
+};
+
+class Explicit {
+  n = 17;
+  get x(this: Foo): number {
+    return this.n;
+  }
+  set x(this: Foo, n: number) {
+    this.n = n;
+  }
+}
+class Contextual {
+  n = 21;
+  get x() {
+    return this.n;
+  } // inside a class, so already correct
+}
+"
+`;
+
+exports[`thisTypeInAccessorsNegative.ts 1`] = `
+"// @noImplicitAny: true
+// @noImplicitThis: true
+// @target: es5
+interface Foo {
+    n: number;
+    x: number;
+}
+interface Bar {
+    wrong: \\"place\\" | \\"time\\" | \\"method\\" | \\"technique\\";
+}
+const mismatch = {
+    n: 13,
+    get x(this: Foo) { return this.n; },
+    set x(this: Bar, n) { this.wrong = \\"method\\"; }
+}
+const contextual: Foo = {
+    n: 16,
+    get x() { return this.n; }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @noImplicitAny: true
+// @noImplicitThis: true
+// @target: es5
+interface Foo {
+  n: number,
+  x: number
+}
+interface Bar {
+  wrong: \\"place\\" | \\"time\\" | \\"method\\" | \\"technique\\"
+}
+const mismatch = {
+  n: 13,
+  get x(this: Foo) {
+    return this.n;
+  },
+  set x(this: Bar, n) {
+    this.wrong = \\"method\\";
+  }
+};
+const contextual: Foo = {
+  n: 16,
+  get x() {
+    return this.n;
+  }
+};
+"
+`;
+
+exports[`thisTypeInBasePropertyAndDerivedContainerOfBase01.ts 1`] = `
+"// @declaration: true
+
+interface BoxOfFoo<T extends Foo> {
+    item: T
+}
+
+interface Foo {
+    self: this;
+}
+
+interface Bar extends Foo {
+    other: BoxOfFoo<this>;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+
+interface BoxOfFoo<T extends Foo> {
+  item: T
+}
+
+interface Foo {
+  self: this
+}
+
+interface Bar extends Foo {
+  other: BoxOfFoo<this>
+}
+"
+`;
+
+exports[`thisTypeInFunctions.ts 1`] = `
+"// body checking
+class B {
+    n: number;
+}
+class C {
+    n: number;
+    explicitThis(this: this, m: number): number {
+        return this.n + m;
+    }
+    explicitC(this: C, m: number): number {
+        return this.n + m;
+    }
+    explicitProperty(this: {n: number}, m: number): number {
+        return this.n + m;
+    }
+    explicitVoid(this: void, m: number): number {
+        return m + 1;
+    }
+}
+class D extends C { }
+interface I {
+    a: number;
+    explicitVoid1(this: void): number;
+    explicitVoid2(this: void): number;
+    explicitStructural(this: {a: number}): number;
+    explicitInterface(this: I): number;
+    explicitThis(this: this): number;
+}
+function explicitStructural(this: { y: number }, x: number): number {
+    return x + this.y;
+}
+function justThis(this: { y: number }): number {
+    return this.y;
+}
+function implicitThis(n: number): number {
+    return this.m + n + 12;
+}
+let impl: I = {
+    a: 12,
+    explicitVoid2: () => this.a, // ok, this: any because it refers to some outer object (window?)
+    explicitVoid1() { return 12; },
+    explicitStructural() {
+        return this.a;
+    },
+    explicitInterface() {
+        return this.a;
+    },
+    explicitThis() {
+        return this.a;
+    },
+}
+impl.explicitVoid1 = function () { return 12; };
+impl.explicitVoid2 = () => 12;
+impl.explicitStructural = function() { return this.a; };
+impl.explicitInterface = function() { return this.a; };
+impl.explicitStructural = () => 12;
+impl.explicitInterface = () => 12;
+impl.explicitThis = function () { return this.a; };
+// parameter checking
+let ok: {y: number, f: (this: { y: number }, x: number) => number} = { y: 12, f: explicitStructural };
+let implicitAnyOk: {notSpecified: number, f: (x: number) => number} = { notSpecified: 12, f: implicitThis };
+ok.f(13);
+implicitThis(12);
+implicitAnyOk.f(12);
+
+let c = new C();
+let d = new D();
+let ripped = c.explicitC;
+c.explicitC(12);
+c.explicitProperty(12);
+c.explicitThis(12);
+d.explicitC(12);
+d.explicitProperty(12);
+d.explicitThis(12);
+let reconstructed: { 
+    n: number,
+    explicitThis(this: C, m: number): number, // note: this: this is not allowed in an object literal type.
+    explicitC(this: C, m: number): number,
+    explicitProperty: (this: {n : number}, m: number) => number,
+    explicitVoid(this: void, m: number): number,
+} = { 
+    n: 12,
+    explicitThis: c.explicitThis,
+    explicitC: c.explicitC,
+    explicitProperty: c.explicitProperty,
+    explicitVoid: c.explicitVoid
+};
+reconstructed.explicitThis(10);
+reconstructed.explicitProperty(11);
+let explicitVoid = reconstructed.explicitVoid;
+explicitVoid(12);
+// assignment checking
+let unboundToSpecified: (this: { y: number }, x: number) => number = x => x + this.y; // ok, this:any
+let specifiedToSpecified: (this: {y: number}, x: number) => number = explicitStructural;
+let anyToSpecified: (this: { y: number }, x: number) => number = function(x: number): number { return x + 12; };
+
+let unspecifiedLambda: (x: number) => number = x => x + 12;
+let specifiedLambda: (this: void, x: number) => number = x => x + 12;
+let unspecifiedLambdaToSpecified: (this: {y: number}, x: number) => number = unspecifiedLambda;
+let specifiedLambdaToSpecified: (this: {y: number}, x: number) => number = specifiedLambda;
+
+
+let explicitCFunction: (this: C, m: number) => number;
+let explicitPropertyFunction: (this: {n: number}, m: number) => number;
+c.explicitC = explicitCFunction;
+c.explicitC = function(this: C, m: number) { return this.n + m };
+c.explicitProperty = explicitPropertyFunction;
+c.explicitProperty = function(this: {n: number}, m: number) { return this.n + m };
+c.explicitProperty = reconstructed.explicitProperty;
+
+// lambdas are assignable to anything
+c.explicitC = m => m;
+c.explicitThis = m => m;
+c.explicitProperty = m => m;
+
+// this inside lambdas refer to outer scope
+// the outer-scoped lambda at top-level is still just \`any\`
+c.explicitC = m => m + this.n;
+c.explicitThis = m => m + this.n;
+c.explicitProperty = m => m + this.n;
+
+//NOTE: this=C here, I guess?
+c.explicitThis = explicitCFunction;
+c.explicitThis = function(this: C, m: number) { return this.n + m };
+
+// this:any compatibility
+c.explicitC = function(m) { return this.n + m };
+c.explicitProperty = function(m) { return this.n + m };
+c.explicitThis = function(m) { return this.n + m };
+
+// this: contextual typing
+c.explicitThis = function(this, m) { return this.n + m };
+
+// this: superclass compatibility
+c.explicitC = function(this: B, m: number) { return this.n + m };
+
+// this:void compatibility
+c.explicitVoid = n => n;
+
+// class-based assignability
+class Base1 {
+    x: number;
+    public polymorphic(this: this): number { return this.x; }
+    explicit(this: Base1): number { return this.x; }
+    static explicitStatic(this: typeof Base1): number { return this.y; }
+    static y: number;
+}
+class Derived1 extends Base1 {
+    y: number
+}
+class Base2 {
+    y: number
+    polymorphic(this: this): number { return this.y; }
+    explicit(this: Base1): number { return this.x; }
+}
+class Derived2 extends Base2 {
+    x: number
+}
+let b1 = new Base1();
+let b2 = new Base2();
+let d1 = new Derived1();
+let d2 = new Derived2();
+d2.polymorphic = d1.polymorphic // ok, 'x' and 'y' in { x, y }
+d1.polymorphic = d2.polymorphic // ok, 'x' and 'y' in { x, y }
+
+// bivariance-allowed cases
+d1.polymorphic = b2.polymorphic // ok, 'y' in D: { x, y }
+d2.polymorphic = d1.explicit // ok, 'y' in { x, y }
+b1.polymorphic = d2.polymorphic // ok, 'x' and 'y' not in Base1: { x }
+b1.explicit = d2.polymorphic // ok, 'x' and 'y' not in Base1: { x }
+
+////// use this-type for construction with new ////
+function InterfaceThis(this: I) {
+    this.a = 12;
+}
+function LiteralTypeThis(this: {x: string}) {
+    this.x = \\"ok\\";
+}
+function AnyThis(this: any) {
+    this.x = \\"ok\\";
+}
+let interfaceThis = new InterfaceThis();
+let literalTypeThis = new LiteralTypeThis();
+let anyThis = new AnyThis();
+
+//// type parameter inference ////
+declare var f: { 
+    (this: void, x: number): number, 
+    call<U>(this: (...argArray: any[]) => U, ...argArray: any[]): U;
+};
+let n: number = f.call(12);
+
+function missingTypeIsImplicitAny(this, a: number) { return this.anything + a; } 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// body checking
+class B {
+  n: number;
+}
+class C {
+  n: number;
+  explicitThis(this: this, m: number): number {
+    return this.n + m;
+  }
+  explicitC(this: C, m: number): number {
+    return this.n + m;
+  }
+  explicitProperty(this: { n: number }, m: number): number {
+    return this.n + m;
+  }
+  explicitVoid(this: void, m: number): number {
+    return m + 1;
+  }
+}
+class D extends C {}
+interface I {
+  a: number,
+  explicitVoid1(this: void): number,
+  explicitVoid2(this: void): number,
+  explicitStructural(this: { a: number }): number,
+  explicitInterface(this: I): number,
+  explicitThis(this: this): number
+}
+function explicitStructural(this: { y: number }, x: number): number {
+  return x + this.y;
+}
+function justThis(this: { y: number }): number {
+  return this.y;
+}
+function implicitThis(n: number): number {
+  return this.m + n + 12;
+}
+let impl: I = {
+  a: 12,
+  explicitVoid2: () => this.a, // ok, this: any because it refers to some outer object (window?)
+  explicitVoid1() {
+    return 12;
+  },
+  explicitStructural() {
+    return this.a;
+  },
+  explicitInterface() {
+    return this.a;
+  },
+  explicitThis() {
+    return this.a;
+  }
+};
+impl.explicitVoid1 = function() {
+  return 12;
+};
+impl.explicitVoid2 = () => 12;
+impl.explicitStructural = function() {
+  return this.a;
+};
+impl.explicitInterface = function() {
+  return this.a;
+};
+impl.explicitStructural = () => 12;
+impl.explicitInterface = () => 12;
+impl.explicitThis = function() {
+  return this.a;
+};
+// parameter checking
+let ok: { y: number, f: (this: { y: number }, x: number) => number } = {
+  y: 12,
+  f: explicitStructural
+};
+let implicitAnyOk: { notSpecified: number, f: (x: number) => number } = {
+  notSpecified: 12,
+  f: implicitThis
+};
+ok.f(13);
+implicitThis(12);
+implicitAnyOk.f(12);
+
+let c = new C();
+let d = new D();
+let ripped = c.explicitC;
+c.explicitC(12);
+c.explicitProperty(12);
+c.explicitThis(12);
+d.explicitC(12);
+d.explicitProperty(12);
+d.explicitThis(12);
+let reconstructed: {
+  n: number,
+  explicitThis(this: C, m: number): number,
+  explicitC(this: C, m: number): number,
+  explicitProperty: (this: { n: number }, m: number) => number,
+  explicitVoid(this: void, m: number): number
+} = { // note: this: this is not allowed in an object literal type.
+  n: 12,
+  explicitThis: c.explicitThis,
+  explicitC: c.explicitC,
+  explicitProperty: c.explicitProperty,
+  explicitVoid: c.explicitVoid
+};
+reconstructed.explicitThis(10);
+reconstructed.explicitProperty(11);
+let explicitVoid = reconstructed.explicitVoid;
+explicitVoid(12);
+// assignment checking
+let unboundToSpecified: (this: { y: number }, x: number) => number = x =>
+  x + this.y; // ok, this:any
+let specifiedToSpecified: (
+  this: { y: number },
+  x: number
+) => number = explicitStructural;
+let anyToSpecified: (this: { y: number }, x: number) => number = function(
+  x: number
+): number {
+  return x + 12;
+};
+
+let unspecifiedLambda: (x: number) => number = x => x + 12;
+let specifiedLambda: (this: void, x: number) => number = x => x + 12;
+let unspecifiedLambdaToSpecified: (
+  this: { y: number },
+  x: number
+) => number = unspecifiedLambda;
+let specifiedLambdaToSpecified: (
+  this: { y: number },
+  x: number
+) => number = specifiedLambda;
+
+let explicitCFunction: (this: C, m: number) => number;
+let explicitPropertyFunction: (this: { n: number }, m: number) => number;
+c.explicitC = explicitCFunction;
+c.explicitC = function(this: C, m: number) {
+  return this.n + m;
+};
+c.explicitProperty = explicitPropertyFunction;
+c.explicitProperty = function(this: { n: number }, m: number) {
+  return this.n + m;
+};
+c.explicitProperty = reconstructed.explicitProperty;
+
+// lambdas are assignable to anything
+c.explicitC = m => m;
+c.explicitThis = m => m;
+c.explicitProperty = m => m;
+
+// this inside lambdas refer to outer scope
+// the outer-scoped lambda at top-level is still just \`any\`
+c.explicitC = m => m + this.n;
+c.explicitThis = m => m + this.n;
+c.explicitProperty = m => m + this.n;
+
+//NOTE: this=C here, I guess?
+c.explicitThis = explicitCFunction;
+c.explicitThis = function(this: C, m: number) {
+  return this.n + m;
+};
+
+// this:any compatibility
+c.explicitC = function(m) {
+  return this.n + m;
+};
+c.explicitProperty = function(m) {
+  return this.n + m;
+};
+c.explicitThis = function(m) {
+  return this.n + m;
+};
+
+// this: contextual typing
+c.explicitThis = function(this, m) {
+  return this.n + m;
+};
+
+// this: superclass compatibility
+c.explicitC = function(this: B, m: number) {
+  return this.n + m;
+};
+
+// this:void compatibility
+c.explicitVoid = n => n;
+
+// class-based assignability
+class Base1 {
+  x: number;
+  public polymorphic(this: this): number {
+    return this.x;
+  }
+  explicit(this: Base1): number {
+    return this.x;
+  }
+  static explicitStatic(this: typeof Base1): number {
+    return this.y;
+  }
+  static y: number;
+}
+class Derived1 extends Base1 {
+  y: number;
+}
+class Base2 {
+  y: number;
+  polymorphic(this: this): number {
+    return this.y;
+  }
+  explicit(this: Base1): number {
+    return this.x;
+  }
+}
+class Derived2 extends Base2 {
+  x: number;
+}
+let b1 = new Base1();
+let b2 = new Base2();
+let d1 = new Derived1();
+let d2 = new Derived2();
+d2.polymorphic = d1.polymorphic; // ok, 'x' and 'y' in { x, y }
+d1.polymorphic = d2.polymorphic; // ok, 'x' and 'y' in { x, y }
+
+// bivariance-allowed cases
+d1.polymorphic = b2.polymorphic; // ok, 'y' in D: { x, y }
+d2.polymorphic = d1.explicit; // ok, 'y' in { x, y }
+b1.polymorphic = d2.polymorphic; // ok, 'x' and 'y' not in Base1: { x }
+b1.explicit = d2.polymorphic; // ok, 'x' and 'y' not in Base1: { x }
+
+////// use this-type for construction with new ////
+function InterfaceThis(this: I) {
+  this.a = 12;
+}
+function LiteralTypeThis(this: { x: string }) {
+  this.x = \\"ok\\";
+}
+function AnyThis(this: any) {
+  this.x = \\"ok\\";
+}
+let interfaceThis = new InterfaceThis();
+let literalTypeThis = new LiteralTypeThis();
+let anyThis = new AnyThis();
+
+//// type parameter inference ////
+declare var f: {
+  (this: void, x: number): number,
+  call<U>(this: (...argArray: any[]) => U, ...argArray: any[]): U
+};
+let n: number = f.call(12);
+
+function missingTypeIsImplicitAny(this, a: number) {
+  return this.anything + a;
+}
+"
+`;
+
+exports[`thisTypeInFunctions2.ts 1`] = `
+"// @noImplicitAny: true
+// @noImplicitThis: true
+
+interface IndexedWithThis {
+    // this is a workaround for React
+    init?: (this: this) => void;
+    willDestroy?: (this: any) => void;
+    [propName: string]: number | string | boolean | symbol | undefined | null | {} | ((this: any, ...args:any[]) => any);
+}
+interface IndexedWithoutThis {
+    // this is what React would like to write (and what they write today)
+    init?: () => void;
+    willDestroy?: () => void;
+    [propName: string]: any;
+}
+interface SimpleInterface {
+    foo(n: string);
+    bar(): number;
+}
+declare function extend1(args: IndexedWithThis): void;
+declare function extend2(args: IndexedWithoutThis): void;
+declare function simple(arg: SimpleInterface): void;
+
+extend1({
+    init() {
+        this // this: IndexedWithThis because of contextual typing.
+        // this.mine
+        this.willDestroy
+    },
+    mine: 12,
+    foo() {
+        this.url; // this: any because 'foo' matches the string indexer
+        this.willDestroy;
+    }
+});
+extend2({
+    init() {
+        this // this: containing object literal type
+        this.mine
+    },
+    mine: 13,
+    foo() {
+        this // this: containing object literal type
+        this.mine
+    }
+});
+
+simple({
+    foo(n) {
+        return n.length + this.bar();
+    },
+    bar() {
+        return 14;
+    }
+})
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @noImplicitAny: true
+// @noImplicitThis: true
+
+interface IndexedWithThis {
+  // this is a workaround for React
+  init?: (this: this) => void,
+  willDestroy?: (this: any) => void,
+  [propName: string]:
+    | number
+    | string
+    | boolean
+    | symbol
+    | undefined
+    | null
+    | {}
+    | ((this: any, ...args: any[]) => any)
+}
+interface IndexedWithoutThis {
+  // this is what React would like to write (and what they write today)
+  init?: () => void,
+  willDestroy?: () => void,
+  [propName: string]: any
+}
+interface SimpleInterface {
+  foo(n: string),
+  bar(): number
+}
+declare function extend1(args: IndexedWithThis): void 
+declare function extend2(args: IndexedWithoutThis): void 
+declare function simple(arg: SimpleInterface): void 
+
+extend1({
+  init() {
+    this; // this: IndexedWithThis because of contextual typing.
+    // this.mine
+    this.willDestroy;
+  },
+  mine: 12,
+  foo() {
+    this.url; // this: any because 'foo' matches the string indexer
+    this.willDestroy;
+  }
+});
+extend2({
+  init() {
+    this; // this: containing object literal type
+    this.mine;
+  },
+  mine: 13,
+  foo() {
+    this; // this: containing object literal type
+    this.mine;
+  }
+});
+
+simple({
+  foo(n) {
+    return n.length + this.bar();
+  },
+  bar() {
+    return 14;
+  }
+});
+"
+`;
+
+exports[`thisTypeInInterfaces.ts 1`] = `
+"interface I1 {
+    x: this;
+    f(x: this): this;
+}
+
+interface I2 {
+    (x: this): this;
+    new (x: this): this;
+    [x: string]: this;
+}
+
+interface Foo<T> {
+    x: T;
+    y: this;
+}
+
+interface I3 {
+    a: this[];
+    b: [this, this];
+    c: this | Date;
+    d: this & Date;
+    e: (((this)));
+    f: (x: this) => this;
+    g: new (x: this) => this;
+    h: Foo<this>;
+    i: Foo<this | (() => this)>;
+    j: (x: any) => x is this;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface I1 {
+  x: this,
+  f(x: this): this
+}
+
+interface I2 {
+  (x: this): this,
+  new (x: this): this,
+  [x: string]: this
+}
+
+interface Foo<T> {
+  x: T,
+  y: this
+}
+
+interface I3 {
+  a: this[],
+  b: [this, this],
+  c: this | Date,
+  d: this & Date,
+  e: (((this))),
+  f: (x: this) => this,
+  g: new (x: this) => this,
+  h: Foo<this>,
+  i: Foo<this | (() => this)>,
+  j: (x: any) => x is this
+}
+"
+`;
+
+exports[`thisTypeInObjectLiterals.ts 1`] = `
+"// @noImplicitAny: true
+// @noImplicitThis: true
+
+let o = {
+    d: \\"bar\\",
+    m() {
+        return this.d.length;
+    },
+    f: function() {
+        return this.d.length;
+    }
+}
+
+let mutuallyRecursive = {
+    a: 100,
+    start() {
+        return this.passthrough(this.a);
+    },
+    passthrough(n: number) {
+        return this.sub1(n);
+    },
+    sub1(n: number): number {
+        if (n > 0) {
+            return this.passthrough(n - 1);
+        }
+        return n;
+    }
+}
+var i: number = mutuallyRecursive.start();
+interface I {
+    a: number;
+    start(): number;
+    passthrough(n: number): number;
+    sub1(n: number): number;
+}
+var impl: I = mutuallyRecursive;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @noImplicitAny: true
+// @noImplicitThis: true
+
+let o = {
+  d: \\"bar\\",
+  m() {
+    return this.d.length;
+  },
+  f: function() {
+    return this.d.length;
+  }
+};
+
+let mutuallyRecursive = {
+  a: 100,
+  start() {
+    return this.passthrough(this.a);
+  },
+  passthrough(n: number) {
+    return this.sub1(n);
+  },
+  sub1(n: number): number {
+    if (n > 0) {
+      return this.passthrough(n - 1);
+    }
+    return n;
+  }
+};
+var i: number = mutuallyRecursive.start();
+interface I {
+  a: number,
+  start(): number,
+  passthrough(n: number): number,
+  sub1(n: number): number
+}
+var impl: I = mutuallyRecursive;
+"
+`;
+
+exports[`thisTypeInObjectLiterals2.ts 1`] = `
+"// @declaration: true
+// @strict: true
+// @target: es5
+
+// In methods of an object literal with no contextual type, 'this' has the type
+// of the object literal.
+
+let obj1 = {
+    a: 1,
+    f() {
+        return this.a;
+    },
+    b: \\"hello\\",
+    c: {
+        g() {
+            this.g();
+        }
+    },
+    get d() {
+        return this.a;
+    },
+    get e() {
+        return this.b;
+    },
+    set e(value) {
+        this.b = value;
+    }
+};
+
+// In methods of an object literal with a contextual type, 'this' has the
+// contextual type.
+
+type Point = {
+    x: number;
+    y: number;
+    z?: number;
+    moveBy(dx: number, dy: number, dz?: number): void;
+}
+
+let p1: Point = {
+    x: 10,
+    y: 20,
+    moveBy(dx, dy, dz) {
+        this.x += dx;
+        this.y += dy;
+        if (this.z && dz) {
+            this.z += dz;
+        }
+    }
+};
+
+let p2: Point | null = {
+    x: 10,
+    y: 20,
+    moveBy(dx, dy, dz) {
+        this.x += dx;
+        this.y += dy;
+        if (this.z && dz) {
+            this.z += dz;
+        }
+    }
+};
+
+let p3: Point | undefined = {
+    x: 10,
+    y: 20,
+    moveBy(dx, dy, dz) {
+        this.x += dx;
+        this.y += dy;
+        if (this.z && dz) {
+            this.z += dz;
+        }
+    }
+};
+
+let p4: Point | null | undefined = {
+    x: 10,
+    y: 20,
+    moveBy(dx, dy, dz) {
+        this.x += dx;
+        this.y += dy;
+        if (this.z && dz) {
+            this.z += dz;
+        }
+    }
+};
+
+declare function f1(p: Point): void;
+
+f1({
+    x: 10,
+    y: 20,
+    moveBy(dx, dy, dz) {
+        this.x += dx;
+        this.y += dy;
+        if (this.z && dz) {
+            this.z += dz;
+        }
+    }
+});
+
+declare function f2(p: Point | null | undefined): void;
+
+f2({
+    x: 10,
+    y: 20,
+    moveBy(dx, dy, dz) {
+        this.x += dx;
+        this.y += dy;
+        if (this.z && dz) {
+            this.z += dz;
+        }
+    }
+});
+
+// In methods of an object literal with a contextual type that includes some
+// ThisType<T>, 'this' is of type T.
+
+type ObjectDescriptor<D, M> = {
+    data?: D;
+    methods?: M & ThisType<D & M>;  // Type of 'this' in methods is D & M
+}
+
+declare function makeObject<D, M>(desc: ObjectDescriptor<D, M>): D & M;
+
+let x1 = makeObject({
+    data: { x: 0, y: 0 },
+    methods: {
+        moveBy(dx: number, dy: number) {
+            this.x += dx;  // Strongly typed this
+            this.y += dy;  // Strongly typed this
+        }
+    }
+});
+
+// In methods contained in an object literal with a contextual type that includes
+// some ThisType<T>, 'this' is of type T.
+
+type ObjectDescriptor2<D, M> = ThisType<D & M> & {
+    data?: D;
+    methods?: M;
+}
+
+declare function makeObject2<D, M>(desc: ObjectDescriptor<D, M>): D & M;
+
+let x2 = makeObject2({
+    data: { x: 0, y: 0 },
+    methods: {
+        moveBy(dx: number, dy: number) {
+            this.x += dx;  // Strongly typed this
+            this.y += dy;  // Strongly typed this
+        }
+    }
+});
+
+// Check pattern similar to Object.defineProperty and Object.defineProperties
+
+type PropDesc<T> = {
+    value?: T;
+    get?(): T;
+    set?(value: T): void;
+}
+
+type PropDescMap<T> = {
+    [K in keyof T]: PropDesc<T[K]>;
+}
+
+declare function defineProp<T, K extends string, U>(obj: T, name: K, desc: PropDesc<U> & ThisType<T>): T & Record<K, U>;
+
+declare function defineProps<T, U>(obj: T, descs: PropDescMap<U> & ThisType<T>): T & U;
+
+let p10 = defineProp(p1, \\"foo\\", { value: 42 });
+p10.foo = p10.foo + 1;
+
+let p11 = defineProp(p1, \\"bar\\", {
+    get() {
+        return this.x;
+    },
+    set(value: number) {
+        this.x = value;
+    }
+});
+p11.bar = p11.bar + 1;
+
+let p12 = defineProps(p1, {
+    foo: {
+        value: 42
+    },
+    bar: {
+        get(): number {
+            return this.x;
+        },
+        set(value: number) {
+            this.x = value;
+        }
+    }
+});
+p12.foo = p12.foo + 1;
+p12.bar = p12.bar + 1;
+
+// Proof of concept for typing of Vue.js
+
+type Accessors<T> = { [K in keyof T]: (() => T[K]) | Computed<T[K]> };
+
+type Dictionary<T> = { [x: string]: T }
+
+type Computed<T> = {
+    get?(): T;
+    set?(value: T): void;
+}
+
+type VueOptions<D, M, P> = ThisType<D & M & P> & {
+    data?: D | (() => D);
+    methods?: M;
+    computed?: Accessors<P>;
+}
+
+declare const Vue: new <D, M, P>(options: VueOptions<D, M, P>) => D & M & P;
+
+let vue = new Vue({
+    data: () => ({ x: 1, y: 2 }),
+    methods: {
+        f(x: string) {
+            return this.x;
+        }
+    },
+    computed: {
+        test(): number {
+            return this.x;
+        },
+        hello: {
+            get() {
+                return \\"hi\\";
+            },
+            set(value: string) {
+            }
+        }
+    }
+});
+
+vue;
+vue.x;
+vue.f(\\"abc\\");
+vue.test;
+vue.hello;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+// @strict: true
+// @target: es5
+
+// In methods of an object literal with no contextual type, 'this' has the type
+// of the object literal.
+
+let obj1 = {
+  a: 1,
+  f() {
+    return this.a;
+  },
+  b: \\"hello\\",
+  c: {
+    g() {
+      this.g();
+    }
+  },
+  get d() {
+    return this.a;
+  },
+  get e() {
+    return this.b;
+  },
+  set e(value) {
+    this.b = value;
+  }
+};
+
+// In methods of an object literal with a contextual type, 'this' has the
+// contextual type.
+
+type Point = {
+  x: number,
+  y: number,
+  z?: number,
+  moveBy(dx: number, dy: number, dz?: number): void
+};
+
+let p1: Point = {
+  x: 10,
+  y: 20,
+  moveBy(dx, dy, dz) {
+    this.x += dx;
+    this.y += dy;
+    if (this.z && dz) {
+      this.z += dz;
+    }
+  }
+};
+
+let p2: Point | null = {
+  x: 10,
+  y: 20,
+  moveBy(dx, dy, dz) {
+    this.x += dx;
+    this.y += dy;
+    if (this.z && dz) {
+      this.z += dz;
+    }
+  }
+};
+
+let p3: Point | undefined = {
+  x: 10,
+  y: 20,
+  moveBy(dx, dy, dz) {
+    this.x += dx;
+    this.y += dy;
+    if (this.z && dz) {
+      this.z += dz;
+    }
+  }
+};
+
+let p4: Point | null | undefined = {
+  x: 10,
+  y: 20,
+  moveBy(dx, dy, dz) {
+    this.x += dx;
+    this.y += dy;
+    if (this.z && dz) {
+      this.z += dz;
+    }
+  }
+};
+
+declare function f1(p: Point): void 
+
+f1({
+  x: 10,
+  y: 20,
+  moveBy(dx, dy, dz) {
+    this.x += dx;
+    this.y += dy;
+    if (this.z && dz) {
+      this.z += dz;
+    }
+  }
+});
+
+declare function f2(p: Point | null | undefined): void 
+
+f2({
+  x: 10,
+  y: 20,
+  moveBy(dx, dy, dz) {
+    this.x += dx;
+    this.y += dy;
+    if (this.z && dz) {
+      this.z += dz;
+    }
+  }
+});
+
+// In methods of an object literal with a contextual type that includes some
+// ThisType<T>, 'this' is of type T.
+
+type ObjectDescriptor<D, M> = {
+  data?: D,
+  methods?: M & ThisType<D & M> // Type of 'this' in methods is D & M
+};
+
+declare function makeObject<D, M>(desc: ObjectDescriptor<D, M>): D & M 
+
+let x1 = makeObject({
+  data: { x: 0, y: 0 },
+  methods: {
+    moveBy(dx: number, dy: number) {
+      this.x += dx; // Strongly typed this
+      this.y += dy; // Strongly typed this
+    }
+  }
+});
+
+// In methods contained in an object literal with a contextual type that includes
+// some ThisType<T>, 'this' is of type T.
+
+type ObjectDescriptor2<D, M> = ThisType<D & M> & {
+  data?: D,
+  methods?: M
+};
+
+declare function makeObject2<D, M>(desc: ObjectDescriptor<D, M>): D & M 
+
+let x2 = makeObject2({
+  data: { x: 0, y: 0 },
+  methods: {
+    moveBy(dx: number, dy: number) {
+      this.x += dx; // Strongly typed this
+      this.y += dy; // Strongly typed this
+    }
+  }
+});
+
+// Check pattern similar to Object.defineProperty and Object.defineProperties
+
+type PropDesc<T> = {
+  value?: T,
+  get?(): T,
+  set?(value: T): void
+};
+
+type PropDescMap<T> = {[K in keyof T]: PropDesc<T[K]>};
+
+declare function defineProp<T, K extends string, U>(
+  obj: T,
+  name: K,
+  desc: PropDesc<U> & ThisType<T>
+): T & Record<K, U> 
+
+declare function defineProps<T, U>(
+  obj: T,
+  descs: PropDescMap<U> & ThisType<T>
+): T & U 
+
+let p10 = defineProp(p1, \\"foo\\", { value: 42 });
+p10.foo = p10.foo + 1;
+
+let p11 = defineProp(p1, \\"bar\\", {
+  get() {
+    return this.x;
+  },
+  set(value: number) {
+    this.x = value;
+  }
+});
+p11.bar = p11.bar + 1;
+
+let p12 = defineProps(p1, {
+  foo: {
+    value: 42
+  },
+  bar: {
+    get(): number {
+      return this.x;
+    },
+    set(value: number) {
+      this.x = value;
+    }
+  }
+});
+p12.foo = p12.foo + 1;
+p12.bar = p12.bar + 1;
+
+// Proof of concept for typing of Vue.js
+
+type Accessors<T> = {[K in keyof T]: (() => T[K]) | Computed<T[K]>};
+
+type Dictionary<T> = { [x: string]: T };
+
+type Computed<T> = {
+  get?(): T,
+  set?(value: T): void
+};
+
+type VueOptions<D, M, P> = ThisType<D & M & P> & {
+  data?: D | (() => D),
+  methods?: M,
+  computed?: Accessors<P>
+};
+
+declare const Vue: new <D, M, P>(options: VueOptions<D, M, P>) => D & M & P;
+
+let vue = new Vue({
+  data: () => ({ x: 1, y: 2 }),
+  methods: {
+    f(x: string) {
+      return this.x;
+    }
+  },
+  computed: {
+    test(): number {
+      return this.x;
+    },
+    hello: {
+      get() {
+        return \\"hi\\";
+      },
+      set(value: string) {}
+    }
+  }
+});
+
+vue;
+vue.x;
+vue.f(\\"abc\\");
+vue.test;
+vue.hello;
+"
+`;
+
+exports[`thisTypeInTuples.ts 1`] = `
+"interface Array<T> {
+    slice(): this;
+}
+
+let t: [number, string] = [42, \\"hello\\"];
+let a = t.slice();
+let b = t.slice(1);
+let c = t.slice(0, 1);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface Array<T> {
+  slice(): this
+}
+
+let t: [number, string] = [42, \\"hello\\"];
+let a = t.slice();
+let b = t.slice(1);
+let c = t.slice(0, 1);
+"
+`;
+
+exports[`typeRelationships.ts 1`] = `
+"class C {
+    self = this;
+    c = new C();
+    foo() {
+        return this;
+    }
+    f1() {
+        this.c = this.self;
+        this.self = this.c;  // Error
+    }
+    f2() {
+        var a: C[];
+        var a = [this, this.c];  // C[] since this is subtype of C
+        var b: this[];
+        var b = [this, this.self, null, undefined];
+    }
+    f3(b: boolean) {
+        return b ? this.c : this.self;  // Should be C
+    }
+}
+
+class D extends C {
+    self1 = this;
+    self2 = this.self;
+    self3 = this.foo();
+    d = new D();
+    bar() {
+        this.self = this.self1;
+        this.self = this.self2;
+        this.self = this.self3;
+        this.self1 = this.self;
+        this.self2 = this.self;
+        this.self3 = this.self;
+        this.d = this.self;
+        this.d = this.c;  // Error
+        this.self = this.d;  // Error
+        this.c = this.d;
+    }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C {
+  self = this;
+  c = new C();
+  foo() {
+    return this;
+  }
+  f1() {
+    this.c = this.self;
+    this.self = this.c; // Error
+  }
+  f2() {
+    var a: C[];
+    var a = [this, this.c]; // C[] since this is subtype of C
+    var b: this[];
+    var b = [this, this.self, null, undefined];
+  }
+  f3(b: boolean) {
+    return b ? this.c : this.self; // Should be C
+  }
+}
+
+class D extends C {
+  self1 = this;
+  self2 = this.self;
+  self3 = this.foo();
+  d = new D();
+  bar() {
+    this.self = this.self1;
+    this.self = this.self2;
+    this.self = this.self3;
+    this.self1 = this.self;
+    this.self2 = this.self;
+    this.self3 = this.self;
+    this.d = this.self;
+    this.d = this.c; // Error
+    this.self = this.d; // Error
+    this.c = this.d;
+  }
+}
+"
+`;
+
+exports[`unionThisTypeInFunctions.ts 1`] = `
+"interface Real {
+    method(this: this, n: number): void;
+    data: string;
+}
+interface Fake {
+    method(this: this, n: number): void;
+    data: number;
+}
+function test(r: Real | Fake) {
+    r.method(12);
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface Real {
+  method(this: this, n: number): void,
+  data: string
+}
+interface Fake {
+  method(this: this, n: number): void,
+  data: number
+}
+function test(r: Real | Fake) {
+  r.method(12);
+}
+"
+`;

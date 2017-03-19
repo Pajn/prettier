@@ -1,0 +1,345 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`classWithOnlyPublicMembersEquivalentToInterface.ts 1`] = `
+"// @target: es5
+// no errors expected
+
+class C {
+    public x: string;
+    public y(a: number): number { return null; }
+    public get z() { return 1; }
+    public set z(v) { }
+    [x: string]: Object;
+    [x: number]: Object;
+    0: number;
+}
+
+interface I {
+    x: string;
+    y(b: number): number;
+    z: number;
+    [x: string]: Object;
+    [x: number]: Object;
+    0: number;
+}
+
+var c: C;
+var i: I;
+c = i;
+i = c;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @target: es5
+// no errors expected
+
+class C {
+  public x: string;
+  public y(a: number): number {
+    return null;
+  }
+  public get z() {
+    return 1;
+  }
+  public set z(v) {}
+  [x: string]: Object
+  [x: number]: Object
+  0: number;
+}
+
+interface I {
+  x: string,
+  y(b: number): number,
+  z: number,
+  [x: string]: Object,
+  [x: number]: Object,
+  0: number
+}
+
+var c: C;
+var i: I;
+c = i;
+i = c;
+"
+`;
+
+exports[`classWithOnlyPublicMembersEquivalentToInterface2.ts 1`] = `
+"// @target: es5
+// no errors expected
+
+class C {
+    public x: string;
+    public y(a: number): number { return null; }
+    public get z() { return 1; }
+    public set z(v) { }
+    [x: string]: Object;
+    [x: number]: Object;
+    0: number;
+
+    public static foo: string; // doesn't effect equivalence
+}
+
+interface I {
+    x: string;
+    y(b: number): number;
+    z: number;
+    [x: string]: Object;
+    [x: number]: Object;
+    0: number;
+}
+
+var c: C;
+var i: I;
+c = i;
+i = c;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @target: es5
+// no errors expected
+
+class C {
+  public x: string;
+  public y(a: number): number {
+    return null;
+  }
+  public get z() {
+    return 1;
+  }
+  public set z(v) {}
+  [x: string]: Object
+  [x: number]: Object
+  0: number;
+
+  static public foo: string; // doesn't effect equivalence
+}
+
+interface I {
+  x: string,
+  y(b: number): number,
+  z: number,
+  [x: string]: Object,
+  [x: number]: Object,
+  0: number
+}
+
+var c: C;
+var i: I;
+c = i;
+i = c;
+"
+`;
+
+exports[`classWithOptionalParameter.ts 1`] = `
+"// classes do not permit optional parameters, these are errors
+
+class C {
+    x?: string;
+    f?() {}
+}
+
+class C2<T> {
+    x?: T;
+    f?(x: T) {}
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// classes do not permit optional parameters, these are errors
+
+class C {
+  x?: string;
+  f?() {}
+}
+
+class C2<T> {
+  x?: T;
+  f?(x: T) {}
+}
+"
+`;
+
+exports[`genericInstantiationEquivalentToObjectLiteral.ts 1`] = `
+"interface Pair<T1, T2> { first: T1; second: T2; }
+var x: Pair<string, number>
+var y: { first: string; second: number; }
+
+x = y;
+y = x;
+
+declare function f<T, U>(x: Pair<T, U>);
+declare function f2<T, U>(x: { first: T; second: U; });
+
+f(x);
+f(y);
+f2(x);
+f2(y);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface Pair<T1, T2> { first: T1, second: T2 }
+var x: Pair<string, number>;
+var y: { first: string, second: number };
+
+x = y;
+y = x;
+
+declare function f<T, U>(x: Pair<T, U>) 
+declare function f2<T, U>(x: { first: T, second: U }) 
+
+f(x);
+f(y);
+f2(x);
+f2(y);
+"
+`;
+
+exports[`interfaceWithPrivateMember.ts 1`] = `
+"// @allowUnusedLabels: true
+
+// interfaces do not permit private members, these are errors
+
+interface I {
+    private x: string;
+}
+
+interface I2<T> {
+    private y: T;
+}
+
+var x: {
+    private y: string;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @allowUnusedLabels: true
+
+// interfaces do not permit private members, these are errors
+
+interface I {
+  private x: string
+}
+
+interface I2<T> {
+  private y: T
+}
+
+var x: {
+  private y: string
+};
+"
+`;
+
+exports[`optionalMethods.ts 1`] = `
+"// @strictNullChecks: true
+// @declaration: true
+
+interface Foo {
+    a: number;
+    b?: number;
+    f(): number;
+    g?(): number;
+}
+
+function test1(x: Foo) {
+    x.a;
+    x.b;
+    x.f;
+    x.g;
+    let f1 = x.f();
+    let g1 = x.g && x.g();
+    let g2 = x.g ? x.g() : 0;
+}
+
+class Bar {
+    a: number;
+    b?: number;
+    c? = 2;
+    constructor(public d?: number, public e = 10) {}
+    f() {
+        return 1;
+    }
+    g?(): number;  // Body of optional method can be omitted
+    h?() {
+        return 2;
+    }
+}
+
+function test2(x: Bar) {
+    x.a;
+    x.b;
+    x.c;
+    x.d;
+    x.e;
+    x.f;
+    x.g;
+    let f1 = x.f();
+    let g1 = x.g && x.g();
+    let g2 = x.g ? x.g() : 0;
+    let h1 = x.h && x.h();
+    let h2 = x.h ? x.h() : 0;
+}
+
+class Base {
+    a?: number;
+    f?(): number;
+}
+
+class Derived extends Base {
+    a = 1;
+    f(): number { return 1; }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @declaration: true
+
+interface Foo {
+  a: number,
+  b?: number,
+  f(): number,
+  g?(): number
+}
+
+function test1(x: Foo) {
+  x.a;
+  x.b;
+  x.f;
+  x.g;
+  let f1 = x.f();
+  let g1 = x.g && x.g();
+  let g2 = x.g ? x.g() : 0;
+}
+
+class Bar {
+  a: number;
+  b?: number;
+  c? = 2;
+  constructor(public d?: number, public e = 10) {}
+  f() {
+    return 1;
+  }
+  g?(): number  // Body of optional method can be omitted
+  h?() {
+    return 2;
+  }
+}
+
+function test2(x: Bar) {
+  x.a;
+  x.b;
+  x.c;
+  x.d;
+  x.e;
+  x.f;
+  x.g;
+  let f1 = x.f();
+  let g1 = x.g && x.g();
+  let g2 = x.g ? x.g() : 0;
+  let h1 = x.h && x.h();
+  let h2 = x.h ? x.h() : 0;
+}
+
+class Base {
+  a?: number;
+  f?(): number 
+}
+
+class Derived extends Base {
+  a = 1;
+  f(): number {
+    return 1;
+  }
+}
+"
+`;

@@ -1,6 +1,6 @@
 "use strict";
 
-var types = require("ast-types");
+var types = require("./types");
 var n = types.namedTypes;
 
 function comparePos(pos1, pos2) {

@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`circularTypeofWithVarOrFunc.ts 1`] = `
+"type typeAlias1 = typeof varOfAliasedType1;
+var varOfAliasedType1: typeAlias1;
+
+var varOfAliasedType2: typeAlias2;
+type typeAlias2 = typeof varOfAliasedType2;
+
+function func(): typeAlias3 { return null; }
+var varOfAliasedType3 = func();
+type typeAlias3 = typeof varOfAliasedType3;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+type typeAlias1 = typeof varOfAliasedType1;
+var varOfAliasedType1: typeAlias1;
+
+var varOfAliasedType2: typeAlias2;
+type typeAlias2 = typeof varOfAliasedType2;
+
+function func(): typeAlias3 {
+  return null;
+}
+var varOfAliasedType3 = func();
+type typeAlias3 = typeof varOfAliasedType3;
+"
+`;
+
+exports[`typeQueryOnClass.ts 1`] = `
+"class C<T> {
+    constructor(x: number);
+    constructor(x: string);
+    constructor(public x) { }
+
+    static foo(x: number);
+    static foo(x: {});
+    static foo(x) { }
+
+    static bar(x) { }
+
+    static sa = 1;
+    static sb = () => 1;
+
+    static get sc() {
+        return 1;
+    }
+    static set sc(x) {
+    }
+
+    static get sd() {
+        return 1;
+    }
+
+    baz(x): string { return ''; }
+
+    ia = 1;
+    ib = () => this.ia;
+
+    get ic() {
+        return 1;
+    }
+    set ic(x) {
+    }
+
+    get id() {
+        return 1;
+    }
+
+}
+
+var c: C<string>;
+
+// BUG 820454
+var r1: typeof C;
+var r2: typeof c;
+
+class D<T> {
+    constructor(public y?) { }
+    x: T;
+    foo() { }
+}
+
+var d: D<string>;
+var r3: typeof D;
+var r4: typeof d;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C<T> {
+  constructor(x: number) 
+  constructor(x: string) 
+  constructor(public x) {}
+
+  static foo(x: number) 
+  static foo(x: {}) 
+  static foo(x) {}
+
+  static bar(x) {}
+
+  static sa = 1;
+  static sb = () => 1;
+
+  static get sc() {
+    return 1;
+  }
+  static set sc(x) {}
+
+  static get sd() {
+    return 1;
+  }
+
+  baz(x): string {
+    return \\"\\";
+  }
+
+  ia = 1;
+  ib = () => this.ia;
+
+  get ic() {
+    return 1;
+  }
+  set ic(x) {}
+
+  get id() {
+    return 1;
+  }
+}
+
+var c: C<string>;
+
+// BUG 820454
+var r1: typeof C;
+var r2: typeof c;
+
+class D<T> {
+  constructor(public y?) {}
+  x: T;
+  foo() {}
+}
+
+var d: D<string>;
+var r3: typeof D;
+var r4: typeof d;
+"
+`;
+
+exports[`typeofClass2.ts 1`] = `
+"class C {
+    constructor(x: number);
+    constructor(x: string);
+    constructor(x) { }
+
+    static foo(x: number);
+    static foo(x: C);
+    static foo(x) { }
+
+    static bar(x) { }
+}
+
+class D extends C {
+    static baz(x: number) { }
+    foo() { }
+}
+
+var d: D;
+
+var r1: typeof D;
+var r2: typeof d;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C {
+  constructor(x: number) 
+  constructor(x: string) 
+  constructor(x) {}
+
+  static foo(x: number) 
+  static foo(x: C) 
+  static foo(x) {}
+
+  static bar(x) {}
+}
+
+class D extends C {
+  static baz(x: number) {}
+  foo() {}
+}
+
+var d: D;
+
+var r1: typeof D;
+var r2: typeof d;
+"
+`;
+
+exports[`typeofClassWithPrivates.ts 1`] = `
+"class C<T> {
+    private a: number;
+    private static b: number;
+    x: T;
+    static y: T;
+}
+
+var c: C<string>;
+var r: typeof C;
+var r2: typeof c;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C<T> {
+  private a: number;
+  static private b: number;
+  x: T;
+  static y: T;
+}
+
+var c: C<string>;
+var r: typeof C;
+var r2: typeof c;
+"
+`;
+
+exports[`typeofTypeParameter.ts 1`] = `
+"function f<T>(x: T): T {
+    var a: typeof x;
+    var y: typeof T;
+    return a;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function f<T>(x: T): T {
+  var a: typeof x;
+  var y: typeof T;
+  return a;
+}
+"
+`;

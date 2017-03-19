@@ -1,0 +1,1352 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mappedTypeErrors.ts 1`] = `
+"// @strictNullChecks: true
+// @declaration: true
+
+interface Shape {
+    name: string;
+    width: number;
+    height: number;
+    visible: boolean;
+}
+
+interface Named {
+    name: string;
+}
+
+interface Point {
+    x: number;
+    y: number;
+}
+
+// Constraint checking
+
+type T00 = { [P in P]: string };  // Error
+type T01 = { [P in number]: string };  // Error
+type T02 = { [P in Date]: number };  // Error
+type T03 = Record<Date, number>;  // Error
+
+type T10 = Pick<Shape, \\"name\\">;
+type T11 = Pick<Shape, \\"foo\\">;  // Error
+type T12 = Pick<Shape, \\"name\\" | \\"foo\\">;  // Error
+type T13 = Pick<Shape, keyof Named>;
+type T14 = Pick<Shape, keyof Point>;  // Error
+type T15 = Pick<Shape, never>;
+type T16 = Pick<Shape, undefined>;  // Error
+
+function f1<T>(x: T) {
+    let y: Pick<Shape, T>;  // Error
+}
+
+function f2<T extends string | number>(x: T) {
+    let y: Pick<Shape, T>;  // Error
+}
+
+function f3<T extends keyof Shape>(x: T) {
+    let y: Pick<Shape, T>;
+}
+
+function f4<T extends keyof Named>(x: T) {
+    let y: Pick<Shape, T>;
+}
+
+// Type identity checking
+
+function f10<T>() {
+    type K = keyof T;
+    var x: { [P in keyof T]: T[P] };
+    var x: { [Q in keyof T]: T[Q] };
+    var x: { [R in K]: T[R] };
+}
+
+function f11<T>() {
+    var x: { [P in keyof T]: T[P] };
+    var x: { [P in keyof T]?: T[P] };  // Error
+    var x: { readonly [P in keyof T]: T[P] };  // Error
+    var x: { readonly [P in keyof T]?: T[P] };  // Error
+}
+
+function f12<T>() {
+    var x: { [P in keyof T]: T[P] };
+    var x: { [P in keyof T]: T[P][] };  // Error
+}
+
+// Check that inferences to mapped types are secondary
+
+declare function objAndReadonly<T>(primary: T, secondary: Readonly<T>): T;
+declare function objAndPartial<T>(primary: T, secondary: Partial<T>): T;
+
+function f20() {
+    let x1 = objAndReadonly({ x: 0, y: 0 }, { x: 1 });  // Error
+    let x2 = objAndReadonly({ x: 0, y: 0 }, { x: 1, y: 1 });
+    let x3 = objAndReadonly({ x: 0, y: 0 }, { x: 1, y: 1, z: 1 });  // Error
+}
+
+function f21() {
+    let x1 = objAndPartial({ x: 0, y: 0 }, { x: 1 });
+    let x2 = objAndPartial({ x: 0, y: 0 }, { x: 1, y: 1 });
+    let x3 = objAndPartial({ x: 0, y: 0 }, { x: 1, y: 1, z: 1 });  // Error
+}
+
+// Verify use of Pick<T, K> for setState functions (#12793)
+
+interface Foo {
+    a: string;
+    b?: number;
+}
+
+function setState<T, K extends keyof T>(obj: T, props: Pick<T, K>) {
+    for (let k in props) {
+        obj[k] = props[k];
+    }
+}
+
+let foo: Foo = { a: \\"hello\\", b: 42 };
+setState(foo, { a: \\"test\\", b: 43 })
+setState(foo, { a: \\"hi\\" });
+setState(foo, { b: undefined });
+setState(foo, { });
+setState(foo, foo);
+setState(foo, { a: undefined });  // Error
+setState(foo, { c: true });  // Error
+
+class C<T> {
+    state: T;
+    setState<K extends keyof T>(props: Pick<T, K>) {
+        for (let k in props) {
+            this.state[k] = props[k];
+        }
+    }
+}
+
+let c = new C<Foo>();
+c.setState({ a: \\"test\\", b: 43 });
+c.setState({ a: \\"hi\\" });
+c.setState({ b: undefined });
+c.setState({ });
+c.setState(foo);
+c.setState({ a: undefined });  // Error
+c.setState({ c: true });  // Error
+
+type T2 = { a?: number, [key: string]: any };
+
+let x1: T2 = { a: 'no' };  // Error
+let x2: Partial<T2> = { a: 'no' }; // Error
+let x3: { [P in keyof T2]: T2[P]} = { a: 'no' };  // Error
+
+// Repro from #13044
+
+type Foo2<T, F extends keyof T> = {
+    pf: {[P in F]?: T[P]},
+    pt: {[P in T]?: T[P]}, // note: should be in keyof T
+};
+type O = {x: number, y: boolean};
+let o: O = {x: 5, y: false};
+let f: Foo2<O, 'x'> = {
+    pf: {x: 7},
+    pt: {x: 7, y: false},
+};
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @declaration: true
+
+interface Shape {
+  name: string,
+  width: number,
+  height: number,
+  visible: boolean
+}
+
+interface Named {
+  name: string
+}
+
+interface Point {
+  x: number,
+  y: number
+}
+
+// Constraint checking
+
+type T00 = {[P in P]: string}; // Error
+type T01 = {[P in number]: string}; // Error
+type T02 = {[P in Date]: number}; // Error
+type T03 = Record<Date, number>; // Error
+
+type T10 = Pick<Shape, \\"name\\">;
+type T11 = Pick<Shape, \\"foo\\">; // Error
+type T12 = Pick<Shape, \\"name\\" | \\"foo\\">; // Error
+type T13 = Pick<Shape, keyof Named>;
+type T14 = Pick<Shape, keyof Point>; // Error
+type T15 = Pick<Shape, never>;
+type T16 = Pick<Shape, undefined>; // Error
+
+function f1<T>(x: T) {
+  let y: Pick<Shape, T>; // Error
+}
+
+function f2<T extends string | number>(x: T) {
+  let y: Pick<Shape, T>; // Error
+}
+
+function f3<T extends keyof Shape>(x: T) {
+  let y: Pick<Shape, T>;
+}
+
+function f4<T extends keyof Named>(x: T) {
+  let y: Pick<Shape, T>;
+}
+
+// Type identity checking
+
+function f10<T>() {
+  type K = keyof T;
+  var x: {[P in keyof T]: T[P]};
+  var x: {[Q in keyof T]: T[Q]};
+  var x: {[R in K]: T[R]};
+}
+
+function f11<T>() {
+  var x: {[P in keyof T]: T[P]};
+  var x: {[P in keyof T]?: T[P]}; // Error
+  var x: {readonly [P in keyof T]: T[P]}; // Error
+  var x: {readonly [P in keyof T]?: T[P]}; // Error
+}
+
+function f12<T>() {
+  var x: {[P in keyof T]: T[P]};
+  var x: {[P in keyof T]: T[P][]}; // Error
+}
+
+// Check that inferences to mapped types are secondary
+
+declare function objAndReadonly<T>(primary: T, secondary: Readonly<T>): T 
+declare function objAndPartial<T>(primary: T, secondary: Partial<T>): T 
+
+function f20() {
+  let x1 = objAndReadonly({ x: 0, y: 0 }, { x: 1 }); // Error
+  let x2 = objAndReadonly({ x: 0, y: 0 }, { x: 1, y: 1 });
+  let x3 = objAndReadonly({ x: 0, y: 0 }, { x: 1, y: 1, z: 1 }); // Error
+}
+
+function f21() {
+  let x1 = objAndPartial({ x: 0, y: 0 }, { x: 1 });
+  let x2 = objAndPartial({ x: 0, y: 0 }, { x: 1, y: 1 });
+  let x3 = objAndPartial({ x: 0, y: 0 }, { x: 1, y: 1, z: 1 }); // Error
+}
+
+// Verify use of Pick<T, K> for setState functions (#12793)
+
+interface Foo {
+  a: string,
+  b?: number
+}
+
+function setState<T, K extends keyof T>(obj: T, props: Pick<T, K>) {
+  for (let k in props) {
+    obj[k] = props[k];
+  }
+}
+
+let foo: Foo = { a: \\"hello\\", b: 42 };
+setState(foo, { a: \\"test\\", b: 43 });
+setState(foo, { a: \\"hi\\" });
+setState(foo, { b: undefined });
+setState(foo, {});
+setState(foo, foo);
+setState(foo, { a: undefined }); // Error
+setState(foo, { c: true }); // Error
+
+class C<T> {
+  state: T;
+  setState<K extends keyof T>(props: Pick<T, K>) {
+    for (let k in props) {
+      this.state[k] = props[k];
+    }
+  }
+}
+
+let c = new C<Foo>();
+c.setState({ a: \\"test\\", b: 43 });
+c.setState({ a: \\"hi\\" });
+c.setState({ b: undefined });
+c.setState({});
+c.setState(foo);
+c.setState({ a: undefined }); // Error
+c.setState({ c: true }); // Error
+
+type T2 = { a?: number, [key: string]: any };
+
+let x1: T2 = { a: \\"no\\" }; // Error
+let x2: Partial<T2> = { a: \\"no\\" }; // Error
+let x3: {[P in keyof T2]: T2[P]} = { a: \\"no\\" }; // Error
+
+// Repro from #13044
+
+type Foo2<T, F extends keyof T> = {
+  pf: {[P in F]?: T[P]},
+  pt: {[P in T]?: T[P]} // note: should be in keyof T
+};
+type O = { x: number, y: boolean };
+let o: O = { x: 5, y: false };
+let f: Foo2<O, \\"x\\"> = {
+  pf: { x: 7 },
+  pt: { x: 7, y: false }
+};
+"
+`;
+
+exports[`mappedTypeModifiers.ts 1`] = `
+"// @strictNullChecks: true
+// @noimplicitany: true
+
+type T = { a: number, b: string };
+type TP = { a?: number, b?: string };
+type TR = { readonly a: number, readonly b: string };
+type TPR = { readonly a?: number, readonly b?: string };
+
+var v00: \\"a\\" | \\"b\\";
+var v00: keyof T;
+var v00: keyof TP;
+var v00: keyof TR;
+var v00: keyof TPR;
+
+var v01: T;
+var v01: { [P in keyof T]: T[P] };
+var v01: Pick<T, keyof T>;
+var v01: Pick<Pick<T, keyof T>, keyof T>;
+
+var v02: TP;
+var v02: { [P in keyof T]?: T[P] };
+var v02: Partial<T>;
+var v02: { [P in keyof TP]: TP[P] }
+var v02: Pick<TP, keyof TP>;
+
+var v03: TR;
+var v03: { readonly [P in keyof T]: T[P] };
+var v03: Readonly<T>;
+var v03: { [P in keyof TR]: TR[P] }
+var v03: Pick<TR, keyof TR>;
+
+var v04: TPR;
+var v04: { readonly [P in keyof T]?: T[P] };
+var v04: Partial<TR>;
+var v04: Readonly<TP>;
+var v04: Partial<Readonly<T>>;
+var v04: Readonly<Partial<T>>;
+var v04: { [P in keyof TPR]: TPR[P] }
+var v04: Pick<TPR, keyof T>;
+
+type Boxified<T> = { [P in keyof T]: { x: T[P] } };
+
+type B = { a: { x: number }, b: { x: string } };
+type BP = { a?: { x: number }, b?: { x: string } };
+type BR = { readonly a: { x: number }, readonly b: { x: string } };
+type BPR = { readonly a?: { x: number }, readonly b?: { x: string } };
+
+var b00: \\"a\\" | \\"b\\";
+var b00: keyof B;
+var b00: keyof BP;
+var b00: keyof BR;
+var b00: keyof BPR;
+
+var b01: B;
+var b01: { [P in keyof B]: B[P] };
+var b01: Pick<B, keyof B>;
+var b01: Pick<Pick<B, keyof B>, keyof B>;
+
+var b02: BP;
+var b02: { [P in keyof B]?: B[P] };
+var b02: Partial<B>;
+var b02: { [P in keyof BP]: BP[P] }
+var b02: Pick<BP, keyof BP>;
+
+var b03: BR;
+var b03: { readonly [P in keyof B]: B[P] };
+var b03: Readonly<B>;
+var b03: { [P in keyof BR]: BR[P] }
+var b03: Pick<BR, keyof BR>;
+
+var b04: BPR;
+var b04: { readonly [P in keyof B]?: B[P] };
+var b04: Partial<BR>;
+var b04: Readonly<BP>;
+var b04: Partial<Readonly<B>>;
+var b04: Readonly<Partial<B>>;
+var b04: { [P in keyof BPR]: BPR[P] }
+var b04: Pick<BPR, keyof BPR>;
+
+type Foo = { prop: number, [x: string]: number };
+
+function f1(x: Partial<Foo>) {
+    x.prop; // ok
+    (x[\\"other\\"] || 0).toFixed();
+}
+
+function f2(x: Readonly<Foo>) {
+    x.prop; // ok
+    x[\\"other\\"].toFixed();
+}
+
+function f3(x: Boxified<Foo>) {
+    x.prop; // ok
+    x[\\"other\\"].x.toFixed();
+}
+
+function f4(x: { [P in keyof Foo]: Foo[P] }) {
+    x.prop; // ok
+    x[\\"other\\"].toFixed();
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @noimplicitany: true
+
+type T = { a: number, b: string };
+type TP = { a?: number, b?: string };
+type TR = { readonly a: number, readonly b: string };
+type TPR = { readonly a?: number, readonly b?: string };
+
+var v00: \\"a\\" | \\"b\\";
+var v00: keyof T;
+var v00: keyof TP;
+var v00: keyof TR;
+var v00: keyof TPR;
+
+var v01: T;
+var v01: {[P in keyof T]: T[P]};
+var v01: Pick<T, keyof T>;
+var v01: Pick<Pick<T, keyof T>, keyof T>;
+
+var v02: TP;
+var v02: {[P in keyof T]?: T[P]};
+var v02: Partial<T>;
+var v02: {[P in keyof TP]: TP[P]};
+var v02: Pick<TP, keyof TP>;
+
+var v03: TR;
+var v03: {readonly [P in keyof T]: T[P]};
+var v03: Readonly<T>;
+var v03: {[P in keyof TR]: TR[P]};
+var v03: Pick<TR, keyof TR>;
+
+var v04: TPR;
+var v04: {readonly [P in keyof T]?: T[P]};
+var v04: Partial<TR>;
+var v04: Readonly<TP>;
+var v04: Partial<Readonly<T>>;
+var v04: Readonly<Partial<T>>;
+var v04: {[P in keyof TPR]: TPR[P]};
+var v04: Pick<TPR, keyof T>;
+
+type Boxified<T> = {[P in keyof T]: { x: T[P] }};
+
+type B = { a: { x: number }, b: { x: string } };
+type BP = { a?: { x: number }, b?: { x: string } };
+type BR = { readonly a: { x: number }, readonly b: { x: string } };
+type BPR = { readonly a?: { x: number }, readonly b?: { x: string } };
+
+var b00: \\"a\\" | \\"b\\";
+var b00: keyof B;
+var b00: keyof BP;
+var b00: keyof BR;
+var b00: keyof BPR;
+
+var b01: B;
+var b01: {[P in keyof B]: B[P]};
+var b01: Pick<B, keyof B>;
+var b01: Pick<Pick<B, keyof B>, keyof B>;
+
+var b02: BP;
+var b02: {[P in keyof B]?: B[P]};
+var b02: Partial<B>;
+var b02: {[P in keyof BP]: BP[P]};
+var b02: Pick<BP, keyof BP>;
+
+var b03: BR;
+var b03: {readonly [P in keyof B]: B[P]};
+var b03: Readonly<B>;
+var b03: {[P in keyof BR]: BR[P]};
+var b03: Pick<BR, keyof BR>;
+
+var b04: BPR;
+var b04: {readonly [P in keyof B]?: B[P]};
+var b04: Partial<BR>;
+var b04: Readonly<BP>;
+var b04: Partial<Readonly<B>>;
+var b04: Readonly<Partial<B>>;
+var b04: {[P in keyof BPR]: BPR[P]};
+var b04: Pick<BPR, keyof BPR>;
+
+type Foo = { prop: number, [x: string]: number };
+
+function f1(x: Partial<Foo>) {
+  x.prop; // ok
+  (x[\\"other\\"] || 0).toFixed();
+}
+
+function f2(x: Readonly<Foo>) {
+  x.prop; // ok
+  x[\\"other\\"].toFixed();
+}
+
+function f3(x: Boxified<Foo>) {
+  x.prop; // ok
+  x[\\"other\\"].x.toFixed();
+}
+
+function f4(x: {[P in keyof Foo]: Foo[P]}) {
+  x.prop; // ok
+  x[\\"other\\"].toFixed();
+}
+"
+`;
+
+exports[`mappedTypeRelationships.ts 1`] = `
+"// @strictNullChecks: true
+// @declaration: true
+
+function f1<T>(x: T, k: keyof T) {
+    return x[k];
+}
+
+function f2<T, K extends keyof T>(x: T, k: K) {
+    return x[k];
+}
+
+function f3<T, U extends T>(x: T, y: U, k: keyof T) {
+    x[k] = y[k];
+    y[k] = x[k];  // Error
+}
+
+function f4<T, U extends T, K extends keyof T>(x: T, y: U, k: K) {
+    x[k] = y[k];
+    y[k] = x[k];  // Error
+}
+
+function f5<T, U extends T>(x: T, y: U, k: keyof U) {
+    x[k] = y[k];  // Error
+    y[k] = x[k];  // Error
+}
+
+function f6<T, U extends T, K extends keyof U>(x: T, y: U, k: K) {
+    x[k] = y[k];  // Error
+    y[k] = x[k];  // Error
+}
+
+function f10<T>(x: T, y: Partial<T>, k: keyof T) {
+    x[k] = y[k];  // Error
+    y[k] = x[k];
+}
+
+function f11<T, K extends keyof T>(x: T, y: Partial<T>, k: K) {
+    x[k] = y[k];  // Error
+    y[k] = x[k];
+}
+
+function f12<T, U extends T>(x: T, y: Partial<U>, k: keyof T) {
+    x[k] = y[k];  // Error
+    y[k] = x[k];  // Error
+}
+
+function f13<T, U extends T, K extends keyof T>(x: T, y: Partial<U>, k: K) {
+    x[k] = y[k];  // Error
+    y[k] = x[k];  // Error
+}
+
+function f20<T>(x: T, y: Readonly<T>, k: keyof T) {
+    x[k] = y[k];
+    y[k] = x[k];  // Error
+}
+
+function f21<T, K extends keyof T>(x: T, y: Readonly<T>, k: K) {
+    x[k] = y[k];
+    y[k] = x[k];  // Error
+}
+
+function f22<T, U extends T>(x: T, y: Readonly<U>, k: keyof T) {
+    x[k] = y[k];
+    y[k] = x[k];  // Error
+}
+
+function f23<T, U extends T, K extends keyof T>(x: T, y: Readonly<U>, k: K) {
+    x[k] = y[k];
+    y[k] = x[k];  // Error
+}
+
+function f30<T>(x: T, y: Partial<T>) {
+    x = y;  // Error
+    y = x;
+}
+
+function f31<T>(x: T, y: Partial<T>) {
+    x = y;  // Error
+    y = x;
+}
+
+function f40<T>(x: T, y: Readonly<T>) {
+    x = y;
+    y = x;
+}
+
+function f41<T>(x: T, y: Readonly<T>) {
+    x = y;
+    y = x;
+}
+
+type Item = {
+    name: string;
+}
+
+type ItemMap = {
+    [x: string]: Item;
+}
+
+function f50<T extends ItemMap>(obj: T, key: keyof T) {
+    let item: Item = obj[key];
+    return obj[key].name;
+}
+
+function f51<T extends ItemMap, K extends keyof T>(obj: T, key: K) {
+    let item: Item = obj[key];
+    return obj[key].name;
+}
+
+type T1<T> = {
+    [P in keyof T]: T[P];
+}
+
+type T2<T> = {
+    [P in keyof T]: T[P];
+}
+
+function f60<U>(x: T1<U>, y: T2<U>) {
+    x = y;
+    y = x;
+}
+
+type Identity<T> = {
+    [P in keyof T]: T[P];
+}
+
+function f61<U>(x: Identity<U>, y: Partial<U>) {
+    x = y;  // Error
+    y = x;
+}
+
+function f62<U>(x: Identity<U>, y: Readonly<U>) {
+    x = y;
+    y = x;
+}
+
+function f70<T>(x: { [P in keyof T]: T[P] }, y: { [P in keyof T]: T[P] }) {
+    x = y;
+    y = x;
+}
+
+function f71<T, U extends T>(x: { [P in keyof T]: T[P] }, y: { [P in keyof T]: U[P] }) {
+    x = y;
+    y = x;  // Error
+}
+
+function f72<T, U extends T>(x: { [P in keyof T]: T[P] }, y: { [P in keyof U]: U[P] }) {
+    x = y;
+    y = x;  // Error
+}
+
+function f73<T, K extends keyof T>(x: { [P in K]: T[P] }, y: { [P in keyof T]: T[P] }) {
+    x = y;
+    y = x;  // Error
+}
+
+function f74<T, U extends T, K extends keyof T>(x: { [P in K]: T[P] }, y: { [P in keyof U]: U[P] }) {
+    x = y;
+    y = x;  // Error
+}
+
+function f75<T, U extends T, K extends keyof T>(x: { [P in K]: T[P] }, y: { [P in keyof T]: U[P] }) {
+    x = y;
+    y = x;  // Error
+}
+
+function f76<T, U extends T, K extends keyof T>(x: { [P in K]: T[P] }, y: { [P in K]: U[P] }) {
+    x = y;
+    y = x;  // Error
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @declaration: true
+
+function f1<T>(x: T, k: keyof T) {
+  return x[k];
+}
+
+function f2<T, K extends keyof T>(x: T, k: K) {
+  return x[k];
+}
+
+function f3<T, U extends T>(x: T, y: U, k: keyof T) {
+  x[k] = y[k];
+  y[k] = x[k]; // Error
+}
+
+function f4<T, U extends T, K extends keyof T>(x: T, y: U, k: K) {
+  x[k] = y[k];
+  y[k] = x[k]; // Error
+}
+
+function f5<T, U extends T>(x: T, y: U, k: keyof U) {
+  x[k] = y[k]; // Error
+  y[k] = x[k]; // Error
+}
+
+function f6<T, U extends T, K extends keyof U>(x: T, y: U, k: K) {
+  x[k] = y[k]; // Error
+  y[k] = x[k]; // Error
+}
+
+function f10<T>(x: T, y: Partial<T>, k: keyof T) {
+  x[k] = y[k]; // Error
+  y[k] = x[k];
+}
+
+function f11<T, K extends keyof T>(x: T, y: Partial<T>, k: K) {
+  x[k] = y[k]; // Error
+  y[k] = x[k];
+}
+
+function f12<T, U extends T>(x: T, y: Partial<U>, k: keyof T) {
+  x[k] = y[k]; // Error
+  y[k] = x[k]; // Error
+}
+
+function f13<T, U extends T, K extends keyof T>(x: T, y: Partial<U>, k: K) {
+  x[k] = y[k]; // Error
+  y[k] = x[k]; // Error
+}
+
+function f20<T>(x: T, y: Readonly<T>, k: keyof T) {
+  x[k] = y[k];
+  y[k] = x[k]; // Error
+}
+
+function f21<T, K extends keyof T>(x: T, y: Readonly<T>, k: K) {
+  x[k] = y[k];
+  y[k] = x[k]; // Error
+}
+
+function f22<T, U extends T>(x: T, y: Readonly<U>, k: keyof T) {
+  x[k] = y[k];
+  y[k] = x[k]; // Error
+}
+
+function f23<T, U extends T, K extends keyof T>(x: T, y: Readonly<U>, k: K) {
+  x[k] = y[k];
+  y[k] = x[k]; // Error
+}
+
+function f30<T>(x: T, y: Partial<T>) {
+  x = y; // Error
+  y = x;
+}
+
+function f31<T>(x: T, y: Partial<T>) {
+  x = y; // Error
+  y = x;
+}
+
+function f40<T>(x: T, y: Readonly<T>) {
+  x = y;
+  y = x;
+}
+
+function f41<T>(x: T, y: Readonly<T>) {
+  x = y;
+  y = x;
+}
+
+type Item = {
+  name: string
+};
+
+type ItemMap = {
+  [x: string]: Item
+};
+
+function f50<T extends ItemMap>(obj: T, key: keyof T) {
+  let item: Item = obj[key];
+  return obj[key].name;
+}
+
+function f51<T extends ItemMap, K extends keyof T>(obj: T, key: K) {
+  let item: Item = obj[key];
+  return obj[key].name;
+}
+
+type T1<T> = {[P in keyof T]: T[P]};
+
+type T2<T> = {[P in keyof T]: T[P]};
+
+function f60<U>(x: T1<U>, y: T2<U>) {
+  x = y;
+  y = x;
+}
+
+type Identity<T> = {[P in keyof T]: T[P]};
+
+function f61<U>(x: Identity<U>, y: Partial<U>) {
+  x = y; // Error
+  y = x;
+}
+
+function f62<U>(x: Identity<U>, y: Readonly<U>) {
+  x = y;
+  y = x;
+}
+
+function f70<T>(x: {[P in keyof T]: T[P]}, y: {[P in keyof T]: T[P]}) {
+  x = y;
+  y = x;
+}
+
+function f71<T, U extends T>(
+  x: {[P in keyof T]: T[P]},
+  y: {[P in keyof T]: U[P]}
+) {
+  x = y;
+  y = x; // Error
+}
+
+function f72<T, U extends T>(
+  x: {[P in keyof T]: T[P]},
+  y: {[P in keyof U]: U[P]}
+) {
+  x = y;
+  y = x; // Error
+}
+
+function f73<T, K extends keyof T>(
+  x: {[P in K]: T[P]},
+  y: {[P in keyof T]: T[P]}
+) {
+  x = y;
+  y = x; // Error
+}
+
+function f74<T, U extends T, K extends keyof T>(
+  x: {[P in K]: T[P]},
+  y: {[P in keyof U]: U[P]}
+) {
+  x = y;
+  y = x; // Error
+}
+
+function f75<T, U extends T, K extends keyof T>(
+  x: {[P in K]: T[P]},
+  y: {[P in keyof T]: U[P]}
+) {
+  x = y;
+  y = x; // Error
+}
+
+function f76<T, U extends T, K extends keyof T>(
+  x: {[P in K]: T[P]},
+  y: {[P in K]: U[P]}
+) {
+  x = y;
+  y = x; // Error
+}
+"
+`;
+
+exports[`mappedTypes1.ts 1`] = `
+"// @strictNullChecks: true
+// @declaration: true
+
+type Item = { a: string, b: number, c: boolean };
+
+type T00 = { [P in \\"x\\" | \\"y\\"]: number };
+type T01 = { [P in \\"x\\" | \\"y\\"]: P };
+type T02 = { [P in \\"a\\" | \\"b\\"]: Item[P]; }
+type T03 = { [P in keyof Item]: Date };
+
+type T10 = { [P in keyof Item]: Item[P] };
+type T11 = { [P in keyof Item]?: Item[P] };
+type T12 = { readonly [P in keyof Item]: Item[P] };
+type T13 = { readonly [P in keyof Item]?: Item[P] };
+
+type T20 = { [P in keyof Item]: Item[P] | null };
+type T21 = { [P in keyof Item]: Array<Item[P]> };
+
+type T30 = { [P in keyof any]: void };
+type T31 = { [P in keyof string]: void };
+type T32 = { [P in keyof number]: void };
+type T33 = { [P in keyof boolean]: void };
+type T34 = { [P in keyof undefined]: void };
+type T35 = { [P in keyof null]: void };
+type T36 = { [P in keyof void]: void };
+type T37 = { [P in keyof symbol]: void };
+type T38 = { [P in keyof never]: void };
+
+type T40 = { [P in string]: void };
+type T43 = { [P in \\"a\\" | \\"b\\"]: void };
+type T44 = { [P in \\"a\\" | \\"b\\" | \\"0\\" | \\"1\\"]: void };
+type T47 = { [P in string | \\"a\\" | \\"b\\" | \\"0\\" | \\"1\\"]: void };
+
+declare function f1<T1>(): { [P in keyof T1]: void };
+declare function f2<T1 extends string>(): { [P in keyof T1]: void };
+declare function f3<T1 extends number>(): { [P in keyof T1]: void };
+declare function f4<T1 extends Number>(): { [P in keyof T1]: void };
+
+let x1 = f1();
+let x2 = f2();
+let x3 = f3();
+let x4 = f4();
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @declaration: true
+
+type Item = { a: string, b: number, c: boolean };
+
+type T00 = {[P in \\"x\\" | \\"y\\"]: number};
+type T01 = {[P in \\"x\\" | \\"y\\"]: P};
+type T02 = {[P in \\"a\\" | \\"b\\"]: Item[P]};
+type T03 = {[P in keyof Item]: Date};
+
+type T10 = {[P in keyof Item]: Item[P]};
+type T11 = {[P in keyof Item]?: Item[P]};
+type T12 = {readonly [P in keyof Item]: Item[P]};
+type T13 = {readonly [P in keyof Item]?: Item[P]};
+
+type T20 = {[P in keyof Item]: Item[P] | null};
+type T21 = {[P in keyof Item]: Array<Item[P]>};
+
+type T30 = {[P in keyof any]: void};
+type T31 = {[P in keyof string]: void};
+type T32 = {[P in keyof number]: void};
+type T33 = {[P in keyof boolean]: void};
+type T34 = {[P in keyof undefined]: void};
+type T35 = {[P in keyof null]: void};
+type T36 = {[P in keyof void]: void};
+type T37 = {[P in keyof symbol]: void};
+type T38 = {[P in keyof never]: void};
+
+type T40 = {[P in string]: void};
+type T43 = {[P in \\"a\\" | \\"b\\"]: void};
+type T44 = {[P in \\"a\\" | \\"b\\" | \\"0\\" | \\"1\\"]: void};
+type T47 = {[P in string | \\"a\\" | \\"b\\" | \\"0\\" | \\"1\\"]: void};
+
+declare function f1<T1>(): {[P in keyof T1]: void} 
+declare function f2<T1 extends string>(): {[P in keyof T1]: void} 
+declare function f3<T1 extends number>(): {[P in keyof T1]: void} 
+declare function f4<T1 extends Number>(): {[P in keyof T1]: void} 
+
+let x1 = f1();
+let x2 = f2();
+let x3 = f3();
+let x4 = f4();
+"
+`;
+
+exports[`mappedTypes2.ts 1`] = `
+"// @strictNullChecks: true
+// @declaration: true
+
+function verifyLibTypes<T, K extends keyof T, U>() {
+    var x1: Partial<T>;
+    var x1: { [P in keyof T]?: T[P] };
+    var x2: Readonly<T>;
+    var x2: { readonly [P in keyof T]: T[P] };
+    var x3: Pick<T, K>;
+    var x3: { [P in K]: T[P] };
+    var x4: Record<K, U>;
+    var x4: { [P in K]: U };
+}
+
+type Proxy<T> = {
+    get(): T;
+    set(value: T): void;
+}
+
+type Proxify<T> = {
+    [P in keyof T]: Proxy<T[P]>;
+}
+
+type DeepReadonly<T> = {
+    readonly [P in keyof T]: DeepReadonly<T[P]>;
+};
+
+declare function assign<T>(obj: T, props: Partial<T>): void;
+declare function freeze<T>(obj: T): Readonly<T>;
+declare function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K>;
+declare function mapObject<K extends string, T, U>(obj: Record<K, T>, f: (x: T) => U): Record<K, U>;
+declare function proxify<T>(obj: T): Proxify<T>;
+
+interface Point {
+    x: number;
+    y: number;
+}
+
+interface Shape {
+    name: string;
+    width: number;
+    height: number;
+    location: Point;
+}
+
+interface PartialShape {
+    name?: string;
+    width?: number;
+    height?: number;
+    location?: Point;
+}
+
+interface ReadonlyShape {
+    readonly name: string;
+    readonly width: number;
+    readonly height: number;
+    readonly location: Point;
+}
+
+function f0(s1: Shape, s2: Shape) {
+    assign(s1, { name: \\"circle\\" });
+    assign(s2, { width: 10, height: 20 });
+}
+
+function f1(shape: Shape) {
+    var frozen: ReadonlyShape;
+    var frozen: Readonly<Shape>;
+    var frozen = freeze(shape);
+}
+
+function f2(shape: Shape) {
+    var partial: PartialShape;
+    var partial: Partial<Shape>;
+    var partial: Partial<Shape> = {};
+}
+
+function f3(shape: Shape) {
+    const x = pick(shape, \\"name\\", \\"location\\");  // { name: string, location: Point }
+}
+
+function f4() {
+    const rec = { foo: \\"hello\\", bar: \\"world\\", baz: \\"bye\\" };
+    const lengths = mapObject(rec, s => s.length);  // { foo: number, bar: number, baz: number }
+}
+
+function f5(shape: Shape) {
+    const p = proxify(shape);
+    let name = p.name.get();
+    p.width.set(42);
+}
+
+function f6(shape: DeepReadonly<Shape>) {
+    let name = shape.name;  // string
+    let location = shape.location;  // DeepReadonly<Point>
+    let x = location.x;  // number
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @declaration: true
+
+function verifyLibTypes<T, K extends keyof T, U>() {
+  var x1: Partial<T>;
+  var x1: {[P in keyof T]?: T[P]};
+  var x2: Readonly<T>;
+  var x2: {readonly [P in keyof T]: T[P]};
+  var x3: Pick<T, K>;
+  var x3: {[P in K]: T[P]};
+  var x4: Record<K, U>;
+  var x4: {[P in K]: U};
+}
+
+type Proxy<T> = {
+  get(): T,
+  set(value: T): void
+};
+
+type Proxify<T> = {[P in keyof T]: Proxy<T[P]>};
+
+type DeepReadonly<T> = {readonly [P in keyof T]: DeepReadonly<T[P]>};
+
+declare function assign<T>(obj: T, props: Partial<T>): void 
+declare function freeze<T>(obj: T): Readonly<T> 
+declare function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> 
+declare function mapObject<K extends string, T, U>(
+  obj: Record<K, T>,
+  f: (x: T) => U
+): Record<K, U> 
+declare function proxify<T>(obj: T): Proxify<T> 
+
+interface Point {
+  x: number,
+  y: number
+}
+
+interface Shape {
+  name: string,
+  width: number,
+  height: number,
+  location: Point
+}
+
+interface PartialShape {
+  name?: string,
+  width?: number,
+  height?: number,
+  location?: Point
+}
+
+interface ReadonlyShape {
+  readonly name: string,
+  readonly width: number,
+  readonly height: number,
+  readonly location: Point
+}
+
+function f0(s1: Shape, s2: Shape) {
+  assign(s1, { name: \\"circle\\" });
+  assign(s2, { width: 10, height: 20 });
+}
+
+function f1(shape: Shape) {
+  var frozen: ReadonlyShape;
+  var frozen: Readonly<Shape>;
+  var frozen = freeze(shape);
+}
+
+function f2(shape: Shape) {
+  var partial: PartialShape;
+  var partial: Partial<Shape>;
+  var partial: Partial<Shape> = {};
+}
+
+function f3(shape: Shape) {
+  const x = pick(shape, \\"name\\", \\"location\\"); // { name: string, location: Point }
+}
+
+function f4() {
+  const rec = { foo: \\"hello\\", bar: \\"world\\", baz: \\"bye\\" };
+  const lengths = mapObject(rec, s => s.length); // { foo: number, bar: number, baz: number }
+}
+
+function f5(shape: Shape) {
+  const p = proxify(shape);
+  let name = p.name.get();
+  p.width.set(42);
+}
+
+function f6(shape: DeepReadonly<Shape>) {
+  let name = shape.name; // string
+  let location = shape.location; // DeepReadonly<Point>
+  let x = location.x; // number
+}
+"
+`;
+
+exports[`mappedTypes3.ts 1`] = `
+"// @declaration: true
+
+class Box<P> {
+    value: P;
+}
+
+type Boxified<T> = {
+    [K in keyof T]: Box<T[K]>;
+}
+
+declare function boxify<T>(obj: T): Boxified<T>;
+declare function unboxify<T>(obj: Boxified<T>): T;
+
+interface Bacon {
+    isPerfect: boolean;
+    weight: number;
+}
+
+interface BoxifiedBacon {
+    isPerfect: Box<boolean>;
+    weight: Box<number>;
+}
+
+function f1(b: Bacon) {
+    let bb = boxify(b);
+    let isPerfect = bb.isPerfect.value;
+    let weight = bb.weight.value;
+}
+
+function f2(bb: Boxified<Bacon>) {
+    let b = unboxify(bb);  // Infer Bacon for T
+    let bool = b.isPerfect;
+    let weight = b.weight;
+}
+
+function f3(bb: BoxifiedBacon) {
+    let b = unboxify<Bacon>(bb);  // Explicit type parameter required
+    let bool = b.isPerfect;
+    let weight = bb.weight;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+
+class Box<P> {
+  value: P;
+}
+
+type Boxified<T> = {[K in keyof T]: Box<T[K]>};
+
+declare function boxify<T>(obj: T): Boxified<T> 
+declare function unboxify<T>(obj: Boxified<T>): T 
+
+interface Bacon {
+  isPerfect: boolean,
+  weight: number
+}
+
+interface BoxifiedBacon {
+  isPerfect: Box<boolean>,
+  weight: Box<number>
+}
+
+function f1(b: Bacon) {
+  let bb = boxify(b);
+  let isPerfect = bb.isPerfect.value;
+  let weight = bb.weight.value;
+}
+
+function f2(bb: Boxified<Bacon>) {
+  let b = unboxify(bb); // Infer Bacon for T
+  let bool = b.isPerfect;
+  let weight = b.weight;
+}
+
+function f3(bb: BoxifiedBacon) {
+  let b = unboxify<Bacon>(bb); // Explicit type parameter required
+  let bool = b.isPerfect;
+  let weight = bb.weight;
+}
+"
+`;
+
+exports[`mappedTypesAndObjects.ts 1`] = `
+"// @strictNullChecks: true
+// @declaration: true
+
+function f1<T>(x: Partial<T>, y: Readonly<T>) {
+    let obj: {};
+    obj = x;
+    obj = y;
+}
+
+function f2<T>(x: Partial<T>, y: Readonly<T>) {
+    let obj: { [x: string]: any };
+    obj = x;
+    obj = y;
+}
+
+function f3<T>(x: Partial<T>) {
+    x = {};
+}
+
+// Repro from #12900
+
+interface Base {
+    foo: { [key: string]: any };
+    bar: any;
+    baz: any;
+}
+
+interface E1<T> extends Base {
+    foo: T;
+}
+
+interface Something { name: string, value: string };
+interface E2 extends Base {
+    foo: Partial<Something>;  // or other mapped type
+}
+
+interface E3<T> extends Base {
+    foo: Partial<T>; // or other mapped type
+}
+
+// Repro from #13747
+
+class Form<T> {
+    private values: {[P in keyof T]?: T[P]} = {}
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+// @declaration: true
+
+function f1<T>(x: Partial<T>, y: Readonly<T>) {
+  let obj: {};
+  obj = x;
+  obj = y;
+}
+
+function f2<T>(x: Partial<T>, y: Readonly<T>) {
+  let obj: { [x: string]: any };
+  obj = x;
+  obj = y;
+}
+
+function f3<T>(x: Partial<T>) {
+  x = {};
+}
+
+// Repro from #12900
+
+interface Base {
+  foo: { [key: string]: any },
+  bar: any,
+  baz: any
+}
+
+interface E1<T> extends Base {
+  foo: T
+}
+
+interface Something { name: string, value: string }
+interface E2 extends Base {
+  foo: Partial<Something> // or other mapped type
+}
+
+interface E3<T> extends Base {
+  foo: Partial<T> // or other mapped type
+}
+
+// Repro from #13747
+
+class Form<T> {
+  private values: {[P in keyof T]?: T[P]} = {};
+}
+"
+`;
+
+exports[`recursiveMappedTypes.ts 1`] = `
+"// @declaration: true
+
+// Recursive mapped types simply appear empty
+
+type Recurse = {
+    [K in keyof Recurse]: Recurse[K]
+}
+
+type Recurse1 = {
+    [K in keyof Recurse2]: Recurse2[K]
+}
+
+type Recurse2 = {
+    [K in keyof Recurse1]: Recurse1[K]
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+
+// Recursive mapped types simply appear empty
+
+type Recurse = {[K in keyof Recurse]: Recurse[K]};
+
+type Recurse1 = {[K in keyof Recurse2]: Recurse2[K]};
+
+type Recurse2 = {[K in keyof Recurse1]: Recurse1[K]};
+"
+`;

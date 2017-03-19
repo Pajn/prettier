@@ -1,0 +1,511 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`multipleNumericIndexers.ts 1`] = `
+"// Multiple indexers of the same type are an error
+
+class C {
+    [x: number]: string;
+    [x: number]: string;
+}
+
+interface I {
+    [x: number]: string;
+    [x: number]: string;
+}
+
+var a: {
+    [x: number]: string;
+    [x: number]: string;
+}
+
+var b: {
+    [x: number]: string;
+    [x: number]: string
+} = { 1: '', \\"2\\": '' }
+
+class C2<T> {
+    [x: number]: string;
+    [x: number]: string;
+}
+
+interface I<T> {
+    [x: number]: string;
+    [x: number]: string;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Multiple indexers of the same type are an error
+
+class C {
+  [x: number]: string
+  [x: number]: string
+}
+
+interface I {
+  [x: number]: string,
+  [x: number]: string
+}
+
+var a: {
+  [x: number]: string,
+  [x: number]: string
+};
+
+var b: {
+  [x: number]: string,
+  [x: number]: string
+} = { 1: \\"\\", \\"2\\": \\"\\" };
+
+class C2<T> {
+  [x: number]: string
+  [x: number]: string
+}
+
+interface I<T> {
+  [x: number]: string,
+  [x: number]: string
+}
+"
+`;
+
+exports[`multipleStringIndexers.ts 1`] = `
+"// Multiple indexers of the same type are an error
+
+class C {
+    [x: string]: string;
+    [x: string]: string;
+}
+
+interface I {
+    [x: string]: string;
+    [x: string]: string;
+}
+
+var a: {
+    [x: string]: string;
+    [x: string]: string;
+}
+
+var b: {
+    [x: string]: string;
+    [x: string]: string;
+} = { y: '' }
+
+class C2<T> {
+    [x: string]: string;
+    [x: string]: string;
+}
+
+interface I2<T> {
+    [x: string]: string;
+    [x: string]: string;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Multiple indexers of the same type are an error
+
+class C {
+  [x: string]: string
+  [x: string]: string
+}
+
+interface I {
+  [x: string]: string,
+  [x: string]: string
+}
+
+var a: {
+  [x: string]: string,
+  [x: string]: string
+};
+
+var b: {
+  [x: string]: string,
+  [x: string]: string
+} = { y: \\"\\" };
+
+class C2<T> {
+  [x: string]: string
+  [x: string]: string
+}
+
+interface I2<T> {
+  [x: string]: string,
+  [x: string]: string
+}
+"
+`;
+
+exports[`numericIndexerConstrainsPropertyDeclarations2.ts 1`] = `
+"// String indexer providing a constraint of a user defined type
+
+class A {
+    foo(): string { return ''; }
+}
+
+class B extends A {
+    bar(): string { return ''; }
+}
+
+class Foo {
+    [x: number]: A;
+    1.0: A; // ok
+    2.0: B; // ok
+    \\"2.5\\": B // ok
+    3.0: number; // error
+    \\"4.0\\": string; // error
+}
+
+interface Foo2 {
+    [x: number]: A;
+    1.0: A; // ok
+    2.0: B; // ok
+    \\"2.5\\": B // ok
+    3.0: number; // error
+    \\"4.0\\": string; // error
+}
+
+var a: {
+    [x: number]: A;
+    1.0: A; // ok
+    2.0: B; // ok
+    \\"2.5\\": B // ok
+    3.0: number; // error
+    \\"4.0\\": string; // error
+};
+
+// error
+var b: { [x: number]: A } = {
+    1.0: new A(), 
+    2.0: new B(), 
+    \\"2.5\\": new B(),
+    3.0: 1,
+    \\"4.0\\": ''
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// String indexer providing a constraint of a user defined type
+
+class A {
+  foo(): string {
+    return \\"\\";
+  }
+}
+
+class B extends A {
+  bar(): string {
+    return \\"\\";
+  }
+}
+
+class Foo {
+  [x: number]: A
+  1.0: A; // ok
+  2.0: B; // ok
+  \\"2.5\\": B; // ok
+  3.0: number; // error
+  \\"4.0\\": string; // error
+}
+
+interface Foo2 {
+  [x: number]: A,
+  1.0: A, // ok
+  2.0: B, // ok
+  \\"2.5\\": B, // ok
+  3.0: number, // error
+  \\"4.0\\": string // error
+}
+
+var a: {
+  [x: number]: A,
+  1.0: A,
+  2.0: B,
+  \\"2.5\\": B,
+  3.0: number,
+  \\"4.0\\": string
+}; // ok // ok // ok // error // error
+
+// error
+var b: { [x: number]: A } = {
+  1.0: new A(),
+  2.0: new B(),
+  \\"2.5\\": new B(),
+  3.0: 1,
+  \\"4.0\\": \\"\\"
+};
+"
+`;
+
+exports[`numericIndexingResults.ts 1`] = `
+"class C {
+    [x: number]: string;
+    1 = '';
+    \\"2\\" = ''
+}
+
+var c: C;
+var r1 = c['1'];
+var r2 = c['2'];
+var r3 = c['3'];
+var r4 = c[1];
+var r5 = c[2];
+var r6 = c[3];
+
+interface I {
+    [x: number]: string;
+    1: string;
+    \\"2\\": string;
+}
+
+var i: I
+var r1 = i['1'];
+var r2 = i['2'];
+var r3 = i['3'];
+var r4 = i[1];
+var r5 = i[2];
+var r6 = i[3];
+
+var a: {
+    [x: number]: string;
+    1: string;
+    \\"2\\": string;
+}
+
+var r1 = a['1'];
+var r2 = a['2'];
+var r3 = a['3'];
+var r4 = a[1];
+var r5 = a[2];
+var r6 = a[3];
+
+var b: { [x: number]: string } = { 1: '', \\"2\\": '' }
+var r1a = b['1'];
+var r2a = b['2'];
+var r3 = b['3'];
+var r4 = b[1];
+var r5 = b[2];
+var r6 = b[3];
+
+var b2: { [x: number]: string; 1: string; \\"2\\": string; } = { 1: '', \\"2\\": '' }
+var r1b = b2['1'];
+var r2b = b2['2'];
+var r3 = b2['3'];
+var r4 = b2[1];
+var r5 = b2[2];
+var r6 = b2[3];
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C {
+  [x: number]: string
+  1 = \\"\\";
+  \\"2\\" = \\"\\";
+}
+
+var c: C;
+var r1 = c[\\"1\\"];
+var r2 = c[\\"2\\"];
+var r3 = c[\\"3\\"];
+var r4 = c[1];
+var r5 = c[2];
+var r6 = c[3];
+
+interface I {
+  [x: number]: string,
+  1: string,
+  \\"2\\": string
+}
+
+var i: I;
+var r1 = i[\\"1\\"];
+var r2 = i[\\"2\\"];
+var r3 = i[\\"3\\"];
+var r4 = i[1];
+var r5 = i[2];
+var r6 = i[3];
+
+var a: {
+  [x: number]: string,
+  1: string,
+  \\"2\\": string
+};
+
+var r1 = a[\\"1\\"];
+var r2 = a[\\"2\\"];
+var r3 = a[\\"3\\"];
+var r4 = a[1];
+var r5 = a[2];
+var r6 = a[3];
+
+var b: { [x: number]: string } = { 1: \\"\\", \\"2\\": \\"\\" };
+var r1a = b[\\"1\\"];
+var r2a = b[\\"2\\"];
+var r3 = b[\\"3\\"];
+var r4 = b[1];
+var r5 = b[2];
+var r6 = b[3];
+
+var b2: { [x: number]: string, 1: string, \\"2\\": string } = { 1: \\"\\", \\"2\\": \\"\\" };
+var r1b = b2[\\"1\\"];
+var r2b = b2[\\"2\\"];
+var r3 = b2[\\"3\\"];
+var r4 = b2[1];
+var r5 = b2[2];
+var r6 = b2[3];
+"
+`;
+
+exports[`stringIndexerConstrainsPropertyDeclarations2.ts 1`] = `
+"// String indexer providing a constraint of a user defined type
+
+class A {
+    foo(): string { return ''; }
+}
+
+class B extends A {
+    bar(): string { return ''; }
+}
+
+class Foo {
+    [x: string]: A;
+    a: A; // ok
+    b: B; // ok
+    c: number; // error
+    d: string; // error
+}
+
+interface Foo2 {
+    [x: string]: A;
+    a: A; // ok
+    b: B; // ok
+    c: number; // error
+    d: string; // error
+}
+
+var a: {
+    [x: string]: A;
+    a: A; // ok
+    b: B; // ok
+    c: number; // error
+    d: string; // error
+};
+
+// error
+var b: { [x: string]: A } = {
+    a: A,
+    b: B
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// String indexer providing a constraint of a user defined type
+
+class A {
+  foo(): string {
+    return \\"\\";
+  }
+}
+
+class B extends A {
+  bar(): string {
+    return \\"\\";
+  }
+}
+
+class Foo {
+  [x: string]: A
+  a: A; // ok
+  b: B; // ok
+  c: number; // error
+  d: string; // error
+}
+
+interface Foo2 {
+  [x: string]: A,
+  a: A, // ok
+  b: B, // ok
+  c: number, // error
+  d: string // error
+}
+
+var a: {
+  [x: string]: A,
+  a: A,
+  b: B,
+  c: number,
+  d: string
+}; // ok // ok // error // error
+
+// error
+var b: { [x: string]: A } = {
+  a: A,
+  b: B
+};
+"
+`;
+
+exports[`stringIndexingResults.ts 1`] = `
+"class C {
+    [x: string]: string;
+    y = '';
+}
+
+var c: C;
+var r1 = c['y']; 
+var r2 = c['a'];
+var r3 = c[1]; 
+
+interface I {
+    [x: string]: string;
+    y: string;
+}
+
+var i: I
+var r4 = i['y'];
+var r5 = i['a'];
+var r6 = i[1]; 
+
+var a: {
+    [x: string]: string;
+    y: string;
+}
+
+var r7 = a['y'];
+var r8 = a['a'];
+var r9 = a[1];
+
+var b: { [x: string]: string } = { y: '' }
+
+var r10 = b['y'];
+var r11 = b['a'];
+var r12 = b[1];
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C {
+  [x: string]: string
+  y = \\"\\";
+}
+
+var c: C;
+var r1 = c[\\"y\\"];
+var r2 = c[\\"a\\"];
+var r3 = c[1];
+
+interface I {
+  [x: string]: string,
+  y: string
+}
+
+var i: I;
+var r4 = i[\\"y\\"];
+var r5 = i[\\"a\\"];
+var r6 = i[1];
+
+var a: {
+  [x: string]: string,
+  y: string
+};
+
+var r7 = a[\\"y\\"];
+var r8 = a[\\"a\\"];
+var r9 = a[1];
+
+var b: { [x: string]: string } = { y: \\"\\" };
+
+var r10 = b[\\"y\\"];
+var r11 = b[\\"a\\"];
+var r12 = b[1];
+"
+`;

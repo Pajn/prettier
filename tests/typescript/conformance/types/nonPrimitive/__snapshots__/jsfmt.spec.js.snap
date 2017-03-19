@@ -1,0 +1,390 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`assignObjectToNonPrimitive.ts 1`] = `
+"var x = {};
+var y = {foo: \\"bar\\"};
+var a: object;
+a = x;
+a = y;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var x = {};
+var y = { foo: \\"bar\\" };
+var a: object;
+a = x;
+a = y;
+"
+`;
+
+exports[`nonPrimitiveAccessProperty.ts 1`] = `
+"var a: object;
+a.toString();
+a.nonExist(); // error
+
+var { destructuring } = a; // error
+var { ...rest } = a; // ok
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var a: object;
+a.toString();
+a.nonExist(); // error
+
+var { destructuring } = a; // error
+var { ...rest } = a; // ok
+"
+`;
+
+exports[`nonPrimitiveAsProperty.ts 1`] = `
+"// @declaration: true
+interface WithNonPrimitive {
+    foo: object
+}
+
+var a: WithNonPrimitive = { foo: {bar: \\"bar\\"} };
+
+var b: WithNonPrimitive = {foo: \\"bar\\"}; // expect error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+interface WithNonPrimitive {
+  foo: object
+}
+
+var a: WithNonPrimitive = { foo: { bar: \\"bar\\" } };
+
+var b: WithNonPrimitive = { foo: \\"bar\\" }; // expect error
+"
+`;
+
+exports[`nonPrimitiveAssignError.ts 1`] = `
+"var x = {};
+var y = {foo: \\"bar\\"};
+var a: object;
+x = a;
+y = a; // expect error
+a = x;
+a = y;
+
+var n = 123;
+var b = true;
+var s = \\"fooo\\";
+
+a = n; // expect error
+a = b; // expect error
+a = s; // expect error
+
+n = a; // expect error
+b = a; // expect error
+s = a; // expect error
+
+var numObj: Number = 123;
+var boolObj: Boolean = true;
+var strObj: String = \\"string\\";
+
+a = numObj; // ok
+a = boolObj; // ok
+a = strObj; // ok
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var x = {};
+var y = { foo: \\"bar\\" };
+var a: object;
+x = a;
+y = a; // expect error
+a = x;
+a = y;
+
+var n = 123;
+var b = true;
+var s = \\"fooo\\";
+
+a = n; // expect error
+a = b; // expect error
+a = s; // expect error
+
+n = a; // expect error
+b = a; // expect error
+s = a; // expect error
+
+var numObj: Number = 123;
+var boolObj: Boolean = true;
+var strObj: String = \\"string\\";
+
+a = numObj; // ok
+a = boolObj; // ok
+a = strObj; // ok
+"
+`;
+
+exports[`nonPrimitiveInFunction.ts 1`] = `
+"// @declaration: true
+function takeObject(o: object) {}
+function returnObject(): object {
+    return {};
+}
+
+var nonPrimitive: object;
+var primitive: boolean;
+
+takeObject(nonPrimitive);
+nonPrimitive = returnObject();
+
+takeObject(primitive); // expect error
+primitive = returnObject(); // expect error
+
+function returnError(): object {
+    var ret = 123;
+    return ret; // expect error
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+function takeObject(o: object) {}
+function returnObject(): object {
+  return {};
+}
+
+var nonPrimitive: object;
+var primitive: boolean;
+
+takeObject(nonPrimitive);
+nonPrimitive = returnObject();
+
+takeObject(primitive); // expect error
+primitive = returnObject(); // expect error
+
+function returnError(): object {
+  var ret = 123;
+  return ret; // expect error
+}
+"
+`;
+
+exports[`nonPrimitiveInGeneric.ts 1`] = `
+"// @declaration: true
+function generic<T>(t: T) {
+    var o: object = t; // expect error
+}
+var a = {};
+var b = \\"42\\";
+
+generic<object>({});
+generic<object>(a);
+generic<object>(123); // expect error
+generic<object>(b); // expect error
+
+function bound<T extends object>(t: T) {
+    var o: object = t; // ok
+}
+
+bound({});
+bound(a);
+bound(123); // expect error
+bound(b); // expect error
+
+function bound2<T extends object>() {}
+
+bound2<{}>();
+bound2<Object>();
+bound2<number>(); // expect error
+bound2<string>(); // expect error
+
+function bound3<T extends {}>(t: T) {
+    var o: object = t; // ok
+}
+
+interface Proxy<T extends object> {}
+
+var x: Proxy<number>; // error
+var y: Proxy<null>; // ok
+var z: Proxy<undefined> ; // ok
+
+
+interface Blah {
+    foo: number;
+}
+
+var u: Proxy<Blah>; // ok
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+function generic<T>(t: T) {
+  var o: object = t; // expect error
+}
+var a = {};
+var b = \\"42\\";
+
+generic<object>({});
+generic<object>(a);
+generic<object>(123); // expect error
+generic<object>(b); // expect error
+
+function bound<T extends object>(t: T) {
+  var o: object = t; // ok
+}
+
+bound({});
+bound(a);
+bound(123); // expect error
+bound(b); // expect error
+
+function bound2<T extends object>() {}
+
+bound2<{}>();
+bound2<Object>();
+bound2<number>(); // expect error
+bound2<string>(); // expect error
+
+function bound3<T extends {}>(t: T) {
+  var o: object = t; // ok
+}
+
+interface Proxy<T extends object> {}
+
+var x: Proxy<number>; // error
+var y: Proxy<null>; // ok
+var z: Proxy<undefined>; // ok
+
+interface Blah {
+  foo: number
+}
+
+var u: Proxy<Blah>; // ok
+"
+`;
+
+exports[`nonPrimitiveStrictNull.ts 1`] = `
+"// @strictNullChecks: true
+
+var a: object
+declare var b: object | null
+declare var c: object | undefined
+declare var d: object | null | undefined
+var e: object | null
+a.toString; // error
+a = undefined; // error
+a = null; // error
+a = b; // error
+a = c; // error
+a = d; // error
+
+e = a; // ok
+a = e; // ok
+
+if (typeof b !== 'object') {
+    b.toString(); // error, never
+}
+
+if (typeof b === 'object') {
+    a = b; // error, b is not narrowed
+}
+
+if (typeof d === 'object') {
+    b = d; // ok
+    d.toString(); // error, object | null
+} else {
+    d.toString(); // error, undefined
+}
+
+if (d == null) {
+    d.toString(); // error, undefined | null
+} else {
+    d.toString(); // object
+}
+
+if (d === null) {
+    d.toString(); // error, null
+} else {
+    d.toString(); // error, object | undefined
+}
+
+if (typeof d === 'undefined') {
+    d.toString(); // error, undefined
+} else {
+    d.toString(); // error, object | null
+}
+
+interface Proxy<T extends object> {}
+
+var x: Proxy<number>; // error
+var y: Proxy<null>; // error
+var z: Proxy<undefined>; // error
+
+interface Blah {
+  foo: number;
+}
+
+var u: Proxy<Blah>; // ok
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @strictNullChecks: true
+
+var a: object;
+declare var b: object | null;
+declare var c: object | undefined;
+declare var d: object | null | undefined;
+var e: object | null;
+a.toString; // error
+a = undefined; // error
+a = null; // error
+a = b; // error
+a = c; // error
+a = d; // error
+
+e = a; // ok
+a = e; // ok
+
+if (typeof b !== \\"object\\") {
+  b.toString(); // error, never
+}
+
+if (typeof b === \\"object\\") {
+  a = b; // error, b is not narrowed
+}
+
+if (typeof d === \\"object\\") {
+  b = d; // ok
+  d.toString(); // error, object | null
+} else {
+  d.toString(); // error, undefined
+}
+
+if (d == null) {
+  d.toString(); // error, undefined | null
+} else {
+  d.toString(); // object
+}
+
+if (d === null) {
+  d.toString(); // error, null
+} else {
+  d.toString(); // error, object | undefined
+}
+
+if (typeof d === \\"undefined\\") {
+  d.toString(); // error, undefined
+} else {
+  d.toString(); // error, object | null
+}
+
+interface Proxy<T extends object> {}
+
+var x: Proxy<number>; // error
+var y: Proxy<null>; // error
+var z: Proxy<undefined>; // error
+
+interface Blah {
+  foo: number
+}
+
+var u: Proxy<Blah>; // ok
+"
+`;
+
+exports[`nonPrimitiveUnionIntersection.ts 1`] = `
+"// @declaration: true
+var a: object & string = \\"\\"; // error
+var b: object | string = \\"\\"; // ok
+a = b; // error
+b = a; // ok
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// @declaration: true
+var a: object & string = \\"\\"; // error
+var b: object | string = \\"\\"; // ok
+a = b; // error
+b = a; // ok
+"
+`;

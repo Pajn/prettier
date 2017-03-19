@@ -1,5 +1,896 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`contextualTypeWithUnionTypeCallSignatures.ts 1`] = `
+"﻿//When used as a contextual type, a union type U has those members that are present in any of 
+// its constituent types, with types that are unions of the respective members in the constituent types. 
+
+// Let S be the set of types in U that have call signatures.
+// If S is not empty and the sets of call signatures of the types in S are identical ignoring return types,
+// U has the same set of call signatures, but with return types that are unions of the return types of the respective call signatures from each type in S.
+
+interface IWithNoCallSignatures {
+    foo: string;
+}
+interface IWithCallSignatures {
+    (a: number): string;
+}
+interface IWithCallSignatures2 {
+    (a: number): number;
+}
+interface IWithCallSignatures3 {
+    (b: string): number;
+}
+interface IWithCallSignatures4 {
+    (a: number): string;
+    (a: string, b: number): number;
+}
+
+// With no call signature | callSignatures
+var x: IWithNoCallSignatures | IWithCallSignatures = a => a.toString();
+
+// With call signatures with different return type
+var x2: IWithCallSignatures | IWithCallSignatures2 = a => a.toString(); // Like iWithCallSignatures
+var x2: IWithCallSignatures | IWithCallSignatures2 = a => a; // Like iWithCallSignatures2
+
+// With call signatures of mismatching parameter type
+var x3: IWithCallSignatures | IWithCallSignatures3 = a => /*here a should be any*/ a.toString();
+
+// With call signature count mismatch
+var x4: IWithCallSignatures | IWithCallSignatures4 = a => /*here a should be any*/ a.toString();
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//When used as a contextual type, a union type U has those members that are present in any of
+// its constituent types, with types that are unions of the respective members in the constituent types.
+
+// Let S be the set of types in U that have call signatures.
+// If S is not empty and the sets of call signatures of the types in S are identical ignoring return types,
+// U has the same set of call signatures, but with return types that are unions of the return types of the respective call signatures from each type in S.
+
+interface IWithNoCallSignatures {
+  foo: string
+}
+interface IWithCallSignatures {
+  (a: number): string
+}
+interface IWithCallSignatures2 {
+  (a: number): number
+}
+interface IWithCallSignatures3 {
+  (b: string): number
+}
+interface IWithCallSignatures4 {
+  (a: number): string,
+  (a: string, b: number): number
+}
+
+// With no call signature | callSignatures
+var x: IWithNoCallSignatures | IWithCallSignatures = a => a.toString();
+
+// With call signatures with different return type
+var x2: IWithCallSignatures | IWithCallSignatures2 = a => a.toString(); // Like iWithCallSignatures
+var x2: IWithCallSignatures | IWithCallSignatures2 = a => a; // Like iWithCallSignatures2
+
+// With call signatures of mismatching parameter type
+var x3: IWithCallSignatures | IWithCallSignatures3 = a =>
+  /*here a should be any*/ a.toString();
+
+// With call signature count mismatch
+var x4: IWithCallSignatures | IWithCallSignatures4 = a =>
+  /*here a should be any*/ a.toString();
+"
+`;
+
+exports[`contextualTypeWithUnionTypeIndexSignatures.ts 1`] = `
+"﻿//When used as a contextual type, a union type U has those members that are present in any of 
+// its constituent types, with types that are unions of the respective members in the constituent types. 
+interface SomeType {
+    (a: number): number;
+}
+interface SomeType2 {
+    (a: number): string;
+}
+
+interface IWithNoStringIndexSignature {
+    foo: string;
+}
+interface IWithNoNumberIndexSignature {
+    0: string;
+}
+interface IWithStringIndexSignature1 {
+    [a: string]: SomeType;
+}
+interface IWithStringIndexSignature2 {
+    [a: string]: SomeType2;
+}
+interface IWithNumberIndexSignature1 {
+    [a: number]: SomeType;
+}
+interface IWithNumberIndexSignature2 {
+    [a: number]: SomeType2;
+}
+
+// When an object literal is contextually typed by a type that includes a string index signature, 
+// the resulting type of the object literal includes a string index signature with the union type of 
+// the types of the properties declared in the object literal, or the Undefined type if the object literal 
+// is empty.Likewise, when an object literal is contextually typed by a type that includes a numeric index 
+// signature, the resulting type of the object literal includes a numeric index signature with the union type
+// of the types of the numerically named properties(section 3.7.4) declared in the object literal, 
+// or the Undefined type if the object literal declares no numerically named properties.
+
+// Let S be the set of types in U that has a string index signature.
+// If S is not empty, U has a string index signature of a union type of 
+// the types of the string index signatures from each type in S.
+var x: IWithNoStringIndexSignature | IWithStringIndexSignature1 = { z: a => a }; // a should be number
+var x: IWithNoStringIndexSignature | IWithStringIndexSignature1 = { foo: a => a }; // a should be any
+var x: IWithNoStringIndexSignature | IWithStringIndexSignature1 = { foo: \\"hello\\" }; 
+var x2: IWithStringIndexSignature1 | IWithStringIndexSignature2 = { z: a => a.toString() }; // a should be number
+var x2: IWithStringIndexSignature1 | IWithStringIndexSignature2 = { z: a => a }; // a should be number
+
+
+// Let S be the set of types in U that has a numeric index signature.
+// If S is not empty, U has a numeric index signature of a union type of 
+// the types of the numeric index signatures from each type in S.
+var x3: IWithNoNumberIndexSignature | IWithNumberIndexSignature1 = { 1: a => a }; // a should be number
+var x3: IWithNoNumberIndexSignature | IWithNumberIndexSignature1 = { 0: a => a }; // a should be any
+var x3: IWithNoNumberIndexSignature | IWithNumberIndexSignature1 = { 0: \\"hello\\" };
+var x4: IWithNumberIndexSignature1 | IWithNumberIndexSignature2 = { 1: a => a.toString() }; // a should be number
+var x4: IWithNumberIndexSignature1 | IWithNumberIndexSignature2 = { 1: a => a }; // a should be number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//When used as a contextual type, a union type U has those members that are present in any of
+// its constituent types, with types that are unions of the respective members in the constituent types.
+interface SomeType {
+  (a: number): number
+}
+interface SomeType2 {
+  (a: number): string
+}
+
+interface IWithNoStringIndexSignature {
+  foo: string
+}
+interface IWithNoNumberIndexSignature {
+  0: string
+}
+interface IWithStringIndexSignature1 {
+  [a: string]: SomeType
+}
+interface IWithStringIndexSignature2 {
+  [a: string]: SomeType2
+}
+interface IWithNumberIndexSignature1 {
+  [a: number]: SomeType
+}
+interface IWithNumberIndexSignature2 {
+  [a: number]: SomeType2
+}
+
+// When an object literal is contextually typed by a type that includes a string index signature,
+// the resulting type of the object literal includes a string index signature with the union type of
+// the types of the properties declared in the object literal, or the Undefined type if the object literal
+// is empty.Likewise, when an object literal is contextually typed by a type that includes a numeric index
+// signature, the resulting type of the object literal includes a numeric index signature with the union type
+// of the types of the numerically named properties(section 3.7.4) declared in the object literal,
+// or the Undefined type if the object literal declares no numerically named properties.
+
+// Let S be the set of types in U that has a string index signature.
+// If S is not empty, U has a string index signature of a union type of
+// the types of the string index signatures from each type in S.
+var x: IWithNoStringIndexSignature | IWithStringIndexSignature1 = { z: a => a }; // a should be number
+var x: IWithNoStringIndexSignature | IWithStringIndexSignature1 = {
+  foo: a => a
+}; // a should be any
+var x: IWithNoStringIndexSignature | IWithStringIndexSignature1 = {
+  foo: \\"hello\\"
+};
+var x2: IWithStringIndexSignature1 | IWithStringIndexSignature2 = {
+  z: a => a.toString()
+}; // a should be number
+var x2: IWithStringIndexSignature1 | IWithStringIndexSignature2 = { z: a => a }; // a should be number
+
+// Let S be the set of types in U that has a numeric index signature.
+// If S is not empty, U has a numeric index signature of a union type of
+// the types of the numeric index signatures from each type in S.
+var x3: IWithNoNumberIndexSignature | IWithNumberIndexSignature1 = {
+  1: a => a
+}; // a should be number
+var x3: IWithNoNumberIndexSignature | IWithNumberIndexSignature1 = {
+  0: a => a
+}; // a should be any
+var x3: IWithNoNumberIndexSignature | IWithNumberIndexSignature1 = {
+  0: \\"hello\\"
+};
+var x4: IWithNumberIndexSignature1 | IWithNumberIndexSignature2 = {
+  1: a => a.toString()
+}; // a should be number
+var x4: IWithNumberIndexSignature1 | IWithNumberIndexSignature2 = { 1: a => a }; // a should be number
+"
+`;
+
+exports[`contextualTypeWithUnionTypeMembers.ts 1`] = `
+"﻿//When used as a contextual type, a union type U has those members that are present in any of 
+// its constituent types, with types that are unions of the respective members in the constituent types. 
+interface I1<T> {
+    commonMethodType(a: string): string;
+    commonPropertyType: string;
+    commonMethodWithTypeParameter(a: T): T;
+
+    methodOnlyInI1(a: string): string;
+    propertyOnlyInI1: string;
+}
+interface I2<T> {
+    commonMethodType(a: string): string;
+    commonPropertyType: string;
+    commonMethodWithTypeParameter(a: T): T;
+
+    methodOnlyInI2(a: string): string;
+    propertyOnlyInI2: string;
+}
+
+// Let S be the set of types in U that has a property P.
+// If S is not empty, U has a property P of a union type of the types of P from each type in S.
+var i1: I1<number>;
+var i2: I2<number>;
+var i1Ori2: I1<number> | I2<number> = i1;
+var i1Ori2: I1<number> | I2<number> = i2;
+var i1Ori2: I1<number> | I2<number> = { // Like i1
+    commonPropertyType: \\"hello\\",
+    commonMethodType: a=> a,
+    commonMethodWithTypeParameter: a => a,
+
+    methodOnlyInI1: a => a,
+    propertyOnlyInI1: \\"Hello\\",
+};
+var i1Ori2: I1<number> | I2<number> = { // Like i2
+    commonPropertyType: \\"hello\\",
+    commonMethodType: a=> a,
+    commonMethodWithTypeParameter: a => a,
+
+    methodOnlyInI2: a => a,
+    propertyOnlyInI2: \\"Hello\\",
+};
+var i1Ori2: I1<number> | I2<number> = { // Like i1 and i2 both
+    commonPropertyType: \\"hello\\",
+    commonMethodType: a=> a,
+    commonMethodWithTypeParameter: a => a,
+    methodOnlyInI1: a => a,
+    propertyOnlyInI1: \\"Hello\\",
+    methodOnlyInI2: a => a,
+    propertyOnlyInI2: \\"Hello\\",
+};
+
+var arrayI1OrI2: Array<I1<number> | I2<number>> = [i1, i2, { // Like i1
+        commonPropertyType: \\"hello\\",
+        commonMethodType: a=> a,
+        commonMethodWithTypeParameter: a => a,
+
+        methodOnlyInI1: a => a,
+        propertyOnlyInI1: \\"Hello\\",
+    },
+    { // Like i2
+        commonPropertyType: \\"hello\\",
+        commonMethodType: a=> a,
+        commonMethodWithTypeParameter: a => a,
+
+        methodOnlyInI2: a => a,
+        propertyOnlyInI2: \\"Hello\\",
+    }, { // Like i1 and i2 both
+        commonPropertyType: \\"hello\\",
+        commonMethodType: a=> a,
+        commonMethodWithTypeParameter: a => a,
+        methodOnlyInI1: a => a,
+        propertyOnlyInI1: \\"Hello\\",
+        methodOnlyInI2: a => a,
+        propertyOnlyInI2: \\"Hello\\",
+    }];
+
+interface I11 {
+    commonMethodDifferentReturnType(a: string, b: number): string;
+    commonPropertyDifferentType: string;
+}
+interface I21 {
+    commonMethodDifferentReturnType(a: string, b: number): number;
+    commonPropertyDifferentType: number;
+}
+var i11: I11;
+var i21: I21;
+var i11Ori21: I11 | I21 = i11;
+var i11Ori21: I11 | I21 = i21;
+var i11Ori21: I11 | I21 = { 
+    // Like i1
+    commonMethodDifferentReturnType: (a, b) => {
+        var z = a.charAt(b);
+        return z;  
+    },
+    commonPropertyDifferentType: \\"hello\\",  
+};
+var i11Ori21: I11 | I21 = { 
+    // Like i2
+    commonMethodDifferentReturnType: (a, b) => {
+        var z = a.charCodeAt(b);
+        return z;
+    },
+    commonPropertyDifferentType: 10,
+};
+var arrayOrI11OrI21: Array<I11 | I21> = [i11, i21, i11 || i21, { 
+        // Like i1
+        commonMethodDifferentReturnType: (a, b) => {
+            var z = a.charAt(b);
+            return z;
+        },
+        commonPropertyDifferentType: \\"hello\\",
+    }, { 
+        // Like i2
+        commonMethodDifferentReturnType: (a, b) => {
+            var z = a.charCodeAt(b);
+            return z;
+        },
+        commonPropertyDifferentType: 10,
+    }];
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//When used as a contextual type, a union type U has those members that are present in any of
+// its constituent types, with types that are unions of the respective members in the constituent types.
+interface I1<T> {
+  commonMethodType(a: string): string,
+  commonPropertyType: string,
+  commonMethodWithTypeParameter(a: T): T,
+
+  methodOnlyInI1(a: string): string,
+  propertyOnlyInI1: string
+}
+interface I2<T> {
+  commonMethodType(a: string): string,
+  commonPropertyType: string,
+  commonMethodWithTypeParameter(a: T): T,
+
+  methodOnlyInI2(a: string): string,
+  propertyOnlyInI2: string
+}
+
+// Let S be the set of types in U that has a property P.
+// If S is not empty, U has a property P of a union type of the types of P from each type in S.
+var i1: I1<number>;
+var i2: I2<number>;
+var i1Ori2: I1<number> | I2<number> = i1;
+var i1Ori2: I1<number> | I2<number> = i2;
+var i1Ori2: I1<number> | I2<number> = {
+  // Like i1
+  commonPropertyType: \\"hello\\",
+  commonMethodType: a => a,
+  commonMethodWithTypeParameter: a => a,
+
+  methodOnlyInI1: a => a,
+  propertyOnlyInI1: \\"Hello\\"
+};
+var i1Ori2: I1<number> | I2<number> = {
+  // Like i2
+  commonPropertyType: \\"hello\\",
+  commonMethodType: a => a,
+  commonMethodWithTypeParameter: a => a,
+
+  methodOnlyInI2: a => a,
+  propertyOnlyInI2: \\"Hello\\"
+};
+var i1Ori2: I1<number> | I2<number> = {
+  // Like i1 and i2 both
+  commonPropertyType: \\"hello\\",
+  commonMethodType: a => a,
+  commonMethodWithTypeParameter: a => a,
+  methodOnlyInI1: a => a,
+  propertyOnlyInI1: \\"Hello\\",
+  methodOnlyInI2: a => a,
+  propertyOnlyInI2: \\"Hello\\"
+};
+
+var arrayI1OrI2: Array<I1<number> | I2<number>> = [
+  i1,
+  i2,
+  {
+    // Like i1
+    commonPropertyType: \\"hello\\",
+    commonMethodType: a => a,
+    commonMethodWithTypeParameter: a => a,
+
+    methodOnlyInI1: a => a,
+    propertyOnlyInI1: \\"Hello\\"
+  },
+  {
+    // Like i2
+    commonPropertyType: \\"hello\\",
+    commonMethodType: a => a,
+    commonMethodWithTypeParameter: a => a,
+
+    methodOnlyInI2: a => a,
+    propertyOnlyInI2: \\"Hello\\"
+  },
+  {
+    // Like i1 and i2 both
+    commonPropertyType: \\"hello\\",
+    commonMethodType: a => a,
+    commonMethodWithTypeParameter: a => a,
+    methodOnlyInI1: a => a,
+    propertyOnlyInI1: \\"Hello\\",
+    methodOnlyInI2: a => a,
+    propertyOnlyInI2: \\"Hello\\"
+  }
+];
+
+interface I11 {
+  commonMethodDifferentReturnType(a: string, b: number): string,
+  commonPropertyDifferentType: string
+}
+interface I21 {
+  commonMethodDifferentReturnType(a: string, b: number): number,
+  commonPropertyDifferentType: number
+}
+var i11: I11;
+var i21: I21;
+var i11Ori21: I11 | I21 = i11;
+var i11Ori21: I11 | I21 = i21;
+var i11Ori21: I11 | I21 = {
+  // Like i1
+  commonMethodDifferentReturnType: (a, b) => {
+    var z = a.charAt(b);
+    return z;
+  },
+  commonPropertyDifferentType: \\"hello\\"
+};
+var i11Ori21: I11 | I21 = {
+  // Like i2
+  commonMethodDifferentReturnType: (a, b) => {
+    var z = a.charCodeAt(b);
+    return z;
+  },
+  commonPropertyDifferentType: 10
+};
+var arrayOrI11OrI21: Array<I11 | I21> = [
+  i11,
+  i21,
+  i11 || i21,
+  {
+    // Like i1
+    commonMethodDifferentReturnType: (a, b) => {
+      var z = a.charAt(b);
+      return z;
+    },
+    commonPropertyDifferentType: \\"hello\\"
+  },
+  {
+    // Like i2
+    commonMethodDifferentReturnType: (a, b) => {
+      var z = a.charCodeAt(b);
+      return z;
+    },
+    commonPropertyDifferentType: 10
+  }
+];
+"
+`;
+
+exports[`contextualTypeWithUnionTypeObjectLiteral.ts 1`] = `
+"﻿var str: string;
+var num: number;
+var strOrNumber: string | number = str || num;
+var objStr: { prop: string };
+var objNum: { prop: number };
+var objStrOrNum1: { prop: string } | { prop: number } = objStr || objNum;
+var objStrOrNum2: { prop: string | number } = objStr || objNum;
+// Below is error because :
+// Spec says:
+// S is a union type and each constituent type of S is assignable to T.
+// T is a union type and S is assignable to at least one constituent type of T.
+// In case of objStrOrNum3, the S is not union Type but object Literal so we go to next step. 
+// Since T is union Type we only allow the assignment of either object with property of type string or object with property of type number but do not allow object with property of type string | number
+var objStrOrNum3: { prop: string } | { prop: number } = {
+    prop: strOrNumber
+};
+var objStrOrNum4: { prop: string | number } = {
+    prop: strOrNumber
+};
+var objStrOrNum5: { prop: string; anotherP: string; } | { prop: number } = { prop: strOrNumber };
+var objStrOrNum6: { prop: string; anotherP: string; } | { prop: number } = {
+    prop: strOrNumber,
+    anotherP: str
+};
+var objStrOrNum7: { prop: string; anotherP: string; } | { prop: number; anotherP1: number } = {
+    prop: strOrNumber,
+    anotherP: str
+};
+var objStrOrNum8: { prop: string; anotherP: string; } | { prop: number; anotherP1: number } = {
+    prop: strOrNumber,
+    anotherP: str,
+    anotherP1: num
+};
+interface I11 {
+    commonMethodDifferentReturnType(a: string, b: number): string;
+}
+interface I21 {
+    commonMethodDifferentReturnType(a: string, b: number): number;
+}
+var i11: I11;
+var i21: I21;
+var i11Ori21: I11 | I21 = i11;
+var i11Ori21: I11 | I21 = i21;
+var i11Ori21: I11 | I21 = { // Like i1
+    commonMethodDifferentReturnType: (a, b) => {
+        var z = a.charAt(b);
+        return z;
+    },
+};
+var i11Ori21: I11 | I21 = { // Like i2
+    commonMethodDifferentReturnType: (a, b) => {
+        var z = a.charCodeAt(b);
+        return z;
+    },
+};
+var strOrNumber: string | number;
+var i11Ori21: I11 | I21 = { // Like i1 and i2 both
+    commonMethodDifferentReturnType: (a, b) => strOrNumber,
+};
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var str: string;
+var num: number;
+var strOrNumber: string | number = str || num;
+var objStr: { prop: string };
+var objNum: { prop: number };
+var objStrOrNum1: { prop: string } | { prop: number } = objStr || objNum;
+var objStrOrNum2: { prop: string | number } = objStr || objNum;
+// Below is error because :
+// Spec says:
+// S is a union type and each constituent type of S is assignable to T.
+// T is a union type and S is assignable to at least one constituent type of T.
+// In case of objStrOrNum3, the S is not union Type but object Literal so we go to next step.
+// Since T is union Type we only allow the assignment of either object with property of type string or object with property of type number but do not allow object with property of type string | number
+var objStrOrNum3: { prop: string } | { prop: number } = {
+  prop: strOrNumber
+};
+var objStrOrNum4: { prop: string | number } = {
+  prop: strOrNumber
+};
+var objStrOrNum5: { prop: string, anotherP: string } | { prop: number } = {
+  prop: strOrNumber
+};
+var objStrOrNum6: { prop: string, anotherP: string } | { prop: number } = {
+  prop: strOrNumber,
+  anotherP: str
+};
+var objStrOrNum7:
+  | { prop: string, anotherP: string }
+  | { prop: number, anotherP1: number } = {
+  prop: strOrNumber,
+  anotherP: str
+};
+var objStrOrNum8:
+  | { prop: string, anotherP: string }
+  | { prop: number, anotherP1: number } = {
+  prop: strOrNumber,
+  anotherP: str,
+  anotherP1: num
+};
+interface I11 {
+  commonMethodDifferentReturnType(a: string, b: number): string
+}
+interface I21 {
+  commonMethodDifferentReturnType(a: string, b: number): number
+}
+var i11: I11;
+var i21: I21;
+var i11Ori21: I11 | I21 = i11;
+var i11Ori21: I11 | I21 = i21;
+var i11Ori21: I11 | I21 = {
+  // Like i1
+  commonMethodDifferentReturnType: (a, b) => {
+    var z = a.charAt(b);
+    return z;
+  }
+};
+var i11Ori21: I11 | I21 = {
+  // Like i2
+  commonMethodDifferentReturnType: (a, b) => {
+    var z = a.charCodeAt(b);
+    return z;
+  }
+};
+var strOrNumber: string | number;
+var i11Ori21: I11 | I21 = {
+  // Like i1 and i2 both
+  commonMethodDifferentReturnType: (a, b) => strOrNumber
+};
+"
+`;
+
+exports[`discriminatedUnionTypes1.ts 1`] = `
+"interface Square {
+    kind: \\"square\\";
+    size: number;
+}
+
+interface Rectangle {
+    kind: \\"rectangle\\";
+    width: number;
+    height: number;
+}
+
+interface Circle {
+    kind: \\"circle\\";
+    radius: number;
+}
+
+type Shape = Square | Rectangle | Circle;
+
+function area1(s: Shape) {
+    if (s.kind === \\"square\\") {
+        return s.size * s.size;
+    }
+    else if (s.kind === \\"circle\\") {
+        return Math.PI * s.radius * s.radius;
+    }
+    else if (s.kind === \\"rectangle\\") {
+        return s.width * s.height;
+    }
+    else {
+        return 0;
+    }
+}
+
+function area2(s: Shape) {
+    switch (s.kind) {
+        case \\"square\\": return s.size * s.size;
+        case \\"rectangle\\": return s.width * s.height;
+        case \\"circle\\": return Math.PI * s.radius * s.radius;
+    }
+}
+
+function assertNever(x: never): never {
+    throw new Error(\\"Unexpected object: \\" + x);
+}
+
+function area3(s: Shape) {
+    switch (s.kind) {
+        case \\"square\\": return s.size * s.size;
+        case \\"rectangle\\": return s.width * s.height;
+        case \\"circle\\": return Math.PI * s.radius * s.radius;
+        default: return assertNever(s);
+    }
+}
+
+function area4(s: Shape) {
+    switch (s.kind) {
+        case \\"square\\": return s.size * s.size;
+        case \\"rectangle\\": return s.width * s.height;
+        case \\"circle\\": return Math.PI * s.radius * s.radius;
+    }
+    return assertNever(s);
+}
+
+type Message =
+    { kind: \\"A\\", x: string } |
+    { kind: \\"B\\" | \\"C\\", y: number } |
+    { kind: \\"D\\" };
+
+function f1(m: Message) {
+    if (m.kind === \\"A\\") {
+        m;  // { kind: \\"A\\", x: string }
+    }
+    else if (m.kind === \\"D\\") {
+        m;  // { kind: \\"D\\" }
+    }
+    else {
+        m;  // { kind: \\"B\\" | \\"C\\", y: number }
+    }
+}
+
+function f2(m: Message) {
+    if (m.kind === \\"A\\") {
+        return;
+    }
+    m;  // { kind: \\"B\\" | \\"C\\", y: number } | { kind: \\"D\\" }
+}
+
+function f3(m: Message) {
+    if (m.kind === \\"X\\") {
+        m;  // never
+    }
+}
+
+function f4(m: Message, x: \\"A\\" | \\"D\\") {
+    if (m.kind == x) {
+        m;  // { kind: \\"A\\", x: string } | { kind: \\"D\\" }
+    }
+}
+
+function f5(m: Message) {
+    switch (m.kind) {
+        case \\"A\\":
+            m;  // { kind: \\"A\\", x: string }
+            break;
+        case \\"D\\":
+            m;  // { kind: \\"D\\" }
+            break;
+        default:
+            m;  // { kind: \\"B\\" | \\"C\\", y: number }
+    }
+}
+
+function f6(m: Message) {
+    switch (m.kind) {
+        case \\"A\\":
+            m;  // { kind: \\"A\\", x: string }
+        case \\"D\\":
+            m;  // { kind: \\"A\\", x: string } | { kind: \\"D\\" }
+            break;
+        default:
+            m;  // { kind: \\"B\\" | \\"C\\", y: number }
+    }
+}
+
+function f7(m: Message) {
+    switch (m.kind) {
+        case \\"A\\":
+        case \\"B\\":
+            return;
+    }
+    m;  // { kind: \\"B\\" | \\"C\\", y: number } | { kind: \\"D\\" }
+}
+
+function f8(m: Message) {
+    switch (m.kind) {
+        case \\"A\\":
+            return;
+        case \\"D\\":
+            throw new Error();
+    }
+    m;  // { kind: \\"B\\" | \\"C\\", y: number }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface Square {
+  kind: \\"square\\",
+  size: number
+}
+
+interface Rectangle {
+  kind: \\"rectangle\\",
+  width: number,
+  height: number
+}
+
+interface Circle {
+  kind: \\"circle\\",
+  radius: number
+}
+
+type Shape = Square | Rectangle | Circle;
+
+function area1(s: Shape) {
+  if (s.kind === \\"square\\") {
+    return s.size * s.size;
+  } else if (s.kind === \\"circle\\") {
+    return Math.PI * s.radius * s.radius;
+  } else if (s.kind === \\"rectangle\\") {
+    return s.width * s.height;
+  } else {
+    return 0;
+  }
+}
+
+function area2(s: Shape) {
+  switch (s.kind) {
+    case \\"square\\":
+      return s.size * s.size;
+    case \\"rectangle\\":
+      return s.width * s.height;
+    case \\"circle\\":
+      return Math.PI * s.radius * s.radius;
+  }
+}
+
+function assertNever(x: never): never {
+  throw new Error(\\"Unexpected object: \\" + x);
+}
+
+function area3(s: Shape) {
+  switch (s.kind) {
+    case \\"square\\":
+      return s.size * s.size;
+    case \\"rectangle\\":
+      return s.width * s.height;
+    case \\"circle\\":
+      return Math.PI * s.radius * s.radius;
+    default:
+      return assertNever(s);
+  }
+}
+
+function area4(s: Shape) {
+  switch (s.kind) {
+    case \\"square\\":
+      return s.size * s.size;
+    case \\"rectangle\\":
+      return s.width * s.height;
+    case \\"circle\\":
+      return Math.PI * s.radius * s.radius;
+  }
+  return assertNever(s);
+}
+
+type Message =
+  | { kind: \\"A\\", x: string }
+  | { kind: \\"B\\" | \\"C\\", y: number }
+  | { kind: \\"D\\" };
+
+function f1(m: Message) {
+  if (m.kind === \\"A\\") {
+    m; // { kind: \\"A\\", x: string }
+  } else if (m.kind === \\"D\\") {
+    m; // { kind: \\"D\\" }
+  } else {
+    m; // { kind: \\"B\\" | \\"C\\", y: number }
+  }
+}
+
+function f2(m: Message) {
+  if (m.kind === \\"A\\") {
+    return;
+  }
+  m; // { kind: \\"B\\" | \\"C\\", y: number } | { kind: \\"D\\" }
+}
+
+function f3(m: Message) {
+  if (m.kind === \\"X\\") {
+    m; // never
+  }
+}
+
+function f4(m: Message, x: \\"A\\" | \\"D\\") {
+  if (m.kind == x) {
+    m; // { kind: \\"A\\", x: string } | { kind: \\"D\\" }
+  }
+}
+
+function f5(m: Message) {
+  switch (m.kind) {
+    case \\"A\\":
+      m; // { kind: \\"A\\", x: string }
+      break;
+    case \\"D\\":
+      m; // { kind: \\"D\\" }
+      break;
+    default:
+      m; // { kind: \\"B\\" | \\"C\\", y: number }
+  }
+}
+
+function f6(m: Message) {
+  switch (m.kind) {
+    case \\"A\\":
+      m; // { kind: \\"A\\", x: string }
+    case \\"D\\":
+      m; // { kind: \\"A\\", x: string } | { kind: \\"D\\" }
+      break;
+    default:
+      m; // { kind: \\"B\\" | \\"C\\", y: number }
+  }
+}
+
+function f7(m: Message) {
+  switch (m.kind) {
+    case \\"A\\":
+    case \\"B\\":
+      return;
+  }
+  m; // { kind: \\"B\\" | \\"C\\", y: number } | { kind: \\"D\\" }
+}
+
+function f8(m: Message) {
+  switch (m.kind) {
+    case \\"A\\":
+      return;
+    case \\"D\\":
+      throw new Error();
+  }
+  m; // { kind: \\"B\\" | \\"C\\", y: number }
+}
+"
+`;
+
 exports[`unionTypeCallSignatures.ts 1`] = `
 "﻿var numOrDate: number | Date;
 var strOrBoolean: string | boolean;
@@ -172,6 +1063,80 @@ var unionWithRestParameter4:
   | { (a: string, b: string): number };
 strOrNum = unionWithRestParameter4(\\"hello\\"); // error supplied parameters do not match any call signature
 strOrNum = unionWithRestParameter4(\\"hello\\", \\"world\\");
+"
+`;
+
+exports[`unionTypeCallSignatures2.ts 1`] = `
+"﻿interface A {
+    (x: number): number;
+    (x: string, y?: string): boolean;
+    (x: Date): void;
+    <T>(x: T[]): T[];
+}
+
+interface B {
+    (x: number): number;
+    (x: string): string;
+    (x: Date): void;
+    <T>(x: T[]): T[];
+}
+
+interface C {
+    (x: string, ...y: string[]): number;
+    (x: number, s?: string): number;
+    <T>(x: T[]): T[];
+}
+
+var f1: A | B | C;
+var n1 = f1(42);             // number
+var s1 = f1(\\"abc\\");          // boolean | string | number
+var a1 = f1([true, false]);  // boolean[]
+
+var f2: C | B | A;
+var n2 = f2(42);             // number
+var s2 = f2(\\"abc\\");          // number | string | boolean
+var a2 = f2([true, false]);  // boolean[]
+
+var f3: B | A | C;
+var n3 = f3(42);             // number
+var s3 = f3(\\"abc\\");          // string | boolean | number
+var a3 = f3([true, false]);  // boolean[]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface A {
+  (x: number): number,
+  (x: string, y?: string): boolean,
+  (x: Date): void,
+  <T>(x: T[]): T[]
+}
+
+interface B {
+  (x: number): number,
+  (x: string): string,
+  (x: Date): void,
+  <T>(x: T[]): T[]
+}
+
+interface C {
+  (x: string, ...y: string[]): number,
+  (x: number, s?: string): number,
+  <T>(x: T[]): T[]
+}
+
+var f1: A | B | C;
+var n1 = f1(42); // number
+var s1 = f1(\\"abc\\"); // boolean | string | number
+var a1 = f1([true, false]); // boolean[]
+
+var f2: C | B | A;
+var n2 = f2(42); // number
+var s2 = f2(\\"abc\\"); // number | string | boolean
+var a2 = f2([true, false]); // boolean[]
+
+var f3: B | A | C;
+var n3 = f3(42); // number
+var s3 = f3(\\"abc\\"); // string | boolean | number
+var a3 = f3([true, false]); // boolean[]
 "
 `;
 
@@ -590,6 +1555,119 @@ anyVar = unionOfTypesWithAndWithoutStringSignature1[10]; // any
 "
 `;
 
+exports[`unionTypeMembers.ts 1`] = `
+"﻿interface I1<T> {
+    commonMethodType(a: string): string;
+    commonPropertyType: string;
+
+    commonMethodDifferentParameterType(a: string): string;
+    commonMethodDifferentReturnType(a: string): string;
+    commonPropertyDifferenType: string;
+
+    commonMethodWithTypeParameter(a: T): T;
+    commonMethodWithOwnTypeParameter<U>(a: U): U;
+
+    methodOnlyInI1(a: string): string;
+    propertyOnlyInI1: string;
+}
+
+interface I2<T> {
+    commonMethodType(a: string): string;
+    commonPropertyType: string;
+
+    commonMethodDifferentParameterType(a: number): number;
+    commonMethodDifferentReturnType(a: string): number;
+    commonPropertyDifferenType: number;
+
+    commonMethodWithTypeParameter(a: T): T;
+    commonMethodWithOwnTypeParameter<U>(a: U): U;
+
+    methodOnlyInI2(a: string): string;
+    propertyOnlyInI2: string;
+}
+
+// a union type U has those members that are present in every one of its constituent types, 
+// with types that are unions of the respective members in the constituent types
+var x : I1<number> | I2<number>;
+var str: string;
+var num: number;
+var strOrNum: string | number;
+
+// If each type in U has a property P, U has a property P of a union type of the types of P from each type in U.
+str = x.commonPropertyType; // string
+str = x.commonMethodType(str); // (a: string) => string so result should be string
+strOrNum = x.commonPropertyDifferenType;
+strOrNum = x.commonMethodDifferentReturnType(str); // string | union
+x.commonMethodDifferentParameterType; // No error - property exists
+x.commonMethodDifferentParameterType(strOrNum); // error - no call signatures because the type of this property is ((a: string) => string) | (a: number) => number
+                                                // and the call signatures arent identical
+num = x.commonMethodWithTypeParameter(num);
+num = x.commonMethodWithOwnTypeParameter(num);
+str = x.commonMethodWithOwnTypeParameter(str);
+strOrNum = x.commonMethodWithOwnTypeParameter(strOrNum);
+
+x.propertyOnlyInI1; // error
+x.propertyOnlyInI2; // error
+x.methodOnlyInI1(\\"hello\\"); // error
+x.methodOnlyInI2(10); // error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface I1<T> {
+  commonMethodType(a: string): string,
+  commonPropertyType: string,
+
+  commonMethodDifferentParameterType(a: string): string,
+  commonMethodDifferentReturnType(a: string): string,
+  commonPropertyDifferenType: string,
+
+  commonMethodWithTypeParameter(a: T): T,
+  commonMethodWithOwnTypeParameter<U>(a: U): U,
+
+  methodOnlyInI1(a: string): string,
+  propertyOnlyInI1: string
+}
+
+interface I2<T> {
+  commonMethodType(a: string): string,
+  commonPropertyType: string,
+
+  commonMethodDifferentParameterType(a: number): number,
+  commonMethodDifferentReturnType(a: string): number,
+  commonPropertyDifferenType: number,
+
+  commonMethodWithTypeParameter(a: T): T,
+  commonMethodWithOwnTypeParameter<U>(a: U): U,
+
+  methodOnlyInI2(a: string): string,
+  propertyOnlyInI2: string
+}
+
+// a union type U has those members that are present in every one of its constituent types,
+// with types that are unions of the respective members in the constituent types
+var x: I1<number> | I2<number>;
+var str: string;
+var num: number;
+var strOrNum: string | number;
+
+// If each type in U has a property P, U has a property P of a union type of the types of P from each type in U.
+str = x.commonPropertyType; // string
+str = x.commonMethodType(str); // (a: string) => string so result should be string
+strOrNum = x.commonPropertyDifferenType;
+strOrNum = x.commonMethodDifferentReturnType(str); // string | union
+x.commonMethodDifferentParameterType; // No error - property exists
+x.commonMethodDifferentParameterType(strOrNum); // error - no call signatures because the type of this property is ((a: string) => string) | (a: number) => number
+// and the call signatures arent identical
+num = x.commonMethodWithTypeParameter(num);
+num = x.commonMethodWithOwnTypeParameter(num);
+str = x.commonMethodWithOwnTypeParameter(str);
+strOrNum = x.commonMethodWithOwnTypeParameter(strOrNum);
+
+x.propertyOnlyInI1; // error
+x.propertyOnlyInI2; // error
+x.methodOnlyInI1(\\"hello\\"); // error
+x.methodOnlyInI2(10); // error
+"
+`;
+
 exports[`unionTypePropertyAccessibility.ts 1`] = `
 "class Default {
     member: string;
@@ -686,5 +1764,98 @@ v12.member;
 v13.member;
 v14.member;
 v15.member;
+"
+`;
+
+exports[`unionTypeReadonly.ts 1`] = `
+"interface Base {
+    readonly value: number;
+}
+interface Identical {
+    readonly value: number;
+}
+interface Mutable {
+    value: number;
+}
+interface DifferentType {
+    readonly value: string;
+}
+interface DifferentName {
+    readonly other: number;
+}
+let base: Base;
+base.value = 12 // error, lhs can't be a readonly property
+let identical: Base | Identical;
+identical.value = 12; // error, lhs can't be a readonly property
+let mutable: Base | Mutable;
+mutable.value = 12; // error, lhs can't be a readonly property
+let differentType: Base | DifferentType;
+differentType.value = 12; // error, lhs can't be a readonly property
+let differentName: Base | DifferentName;
+differentName.value = 12; // error, property 'value' doesn't exist
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface Base {
+  readonly value: number
+}
+interface Identical {
+  readonly value: number
+}
+interface Mutable {
+  value: number
+}
+interface DifferentType {
+  readonly value: string
+}
+interface DifferentName {
+  readonly other: number
+}
+let base: Base;
+base.value = 12; // error, lhs can't be a readonly property
+let identical: Base | Identical;
+identical.value = 12; // error, lhs can't be a readonly property
+let mutable: Base | Mutable;
+mutable.value = 12; // error, lhs can't be a readonly property
+let differentType: Base | DifferentType;
+differentType.value = 12; // error, lhs can't be a readonly property
+let differentName: Base | DifferentName;
+differentName.value = 12; // error, property 'value' doesn't exist
+"
+`;
+
+exports[`unionTypeReduction.ts 1`] = `
+"interface I2 {
+    (): number;
+    (q): boolean;
+}
+
+interface I3 {
+    (): number;
+}
+
+var i2: I2, i3: I3;
+
+var e1: I2 | I3;
+var e2 = i2 || i3;  // Type of e2 immediately reduced to I3
+
+var r1 = e1();  // Type of e1 reduced to I3 upon accessing property or signature
+var r2 = e2();
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+interface I2 {
+  (): number,
+  (q): boolean
+}
+
+interface I3 {
+  (): number
+}
+
+var i2: I2, i3: I3;
+
+var e1: I2 | I3;
+var e2 = i2 || i3; // Type of e2 immediately reduced to I3
+
+var r1 = e1(); // Type of e1 reduced to I3 upon accessing property or signature
+var r2 = e2();
 "
 `;

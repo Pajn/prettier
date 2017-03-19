@@ -1,7 +1,7 @@
 "use strict";
 const fs = require("fs");
 const prettier = require("../");
-const types = require("ast-types");
+const types = require("../src/types");
 const parser = require("../src/parser");
 
 const RUN_AST_TESTS = process.env["AST_COMPARE"];

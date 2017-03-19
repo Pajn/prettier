@@ -26,7 +26,7 @@ var isLineNext = docUtils.isLineNext;
 var getFirstString = docUtils.getFirstString;
 var isEmpty = docUtils.isEmpty;
 
-var types = require("ast-types");
+var types = require("./types");
 var namedTypes = types.namedTypes;
 var isString = types.builtInTypes.string;
 var isObject = types.builtInTypes.object;
@@ -333,6 +333,14 @@ function genericPrintNoParens(path, options, print) {
     case "MethodDefinition":
       if (n.static) {
         parts.push("static ");
+      }
+
+      if (n.accessibility === "public") {
+        parts.push("public ");
+      } else if (n.accessibility === "protected") {
+        parts.push("protected ");
+      } else if (n.accessibility === "private") {
+        parts.push("private ");
       }
 
       parts.push(printMethod(path, options, print));
@@ -914,6 +922,7 @@ function genericPrintNoParens(path, options, print) {
 
       return concat(parts);
     case "VariableDeclaration":
+    case "TSAmbientVariableDeclaration":
       var printed = path.map(
         function(childPath) {
           return print(childPath);
@@ -930,6 +939,10 @@ function genericPrintNoParens(path, options, print) {
           concat(printed.slice(1).map(p => concat([",", line, p])))
         )
       ];
+
+      if (n.type === "TSAmbientVariableDeclaration") {
+        parts.unshift("declare ");
+      }
 
       // We generally want to terminate all variable declarations with a
       // semicolon, except when they in the () part of for loops.
@@ -949,7 +962,10 @@ function genericPrintNoParens(path, options, print) {
       return group(concat(parts));
     case "VariableDeclarator":
       return printAssignment(
-        path.call(print, "id"),
+        concat([
+          path.call(print, "id"),
+          path.call(print, "typeParameters"),
+        ]),
         "=",
         n.init,
         n.init && path.call(print, "init"),
@@ -1550,19 +1566,22 @@ function genericPrintNoParens(path, options, print) {
     case "DeclareExportDeclaration":
       return concat(["declare ", printExportDeclaration(path, options, print)]);
     case "FunctionTypeAnnotation":
+    case "TSConstructorType":
     case "TSFunctionType":
       // FunctionTypeAnnotation is ambiguous:
       // declare function foo(a: B): void; OR
       // var A: (a: B) => void;
       var parent = path.getParentNode(0);
-      var isArrowFunctionTypeAnnotation = n.type === "TSFunctionType" || !((!getFlowVariance(parent, options) &&
+      var isArrowFunctionTypeAnnotation = n.type === "TSFunctionType" ||
+        n.type === "TSConstructorType" || !((!getFlowVariance(parent, options) &&
         !parent.optional &&
         namedTypes.ObjectTypeProperty.check(parent)) ||
         namedTypes.ObjectTypeCallProperty.check(parent) ||
         namedTypes.DeclareFunction.check(path.getParentNode(2)));
 
       var needsColon = isArrowFunctionTypeAnnotation &&
-        namedTypes.TypeAnnotation.check(parent);
+        namedTypes.TypeAnnotation.check(parent) &&
+        !shouldTypeScriptTypeAvoidColon(path);
 
       if (isObjectTypePropertyAFunction(parent)) {
         isArrowFunctionTypeAnnotation = true;
@@ -1571,6 +1590,10 @@ function genericPrintNoParens(path, options, print) {
 
       if (needsColon) {
         parts.push(": ");
+      }
+
+      if (n.type === "TSConstructorType") {
+        parts.push("new ");
       }
 
       parts.push(path.call(print, "typeParameters"));
@@ -1642,6 +1665,7 @@ function genericPrintNoParens(path, options, print) {
         path.call(print, "id"),
         path.call(print, "typeParameters")
       ]);
+    case "TSIntersectionType":
     case "IntersectionTypeAnnotation": {
       const types = path.map(print, "types");
       const result = [];
@@ -1649,10 +1673,8 @@ function genericPrintNoParens(path, options, print) {
         if (i === 0) {
           result.push(types[i]);
         } else if (
-          (n.types[i - 1].type === "ObjectTypeAnnotation" &&
-            n.types[i].type !== "ObjectTypeAnnotation") ||
-          (n.types[i - 1].type !== "ObjectTypeAnnotation" &&
-            n.types[i].type === "ObjectTypeAnnotation")
+          (isObjectTypeAnnotation(n.types[i - 1]) && !isObjectTypeAnnotation(n.types[i])) ||
+          (!isObjectTypeAnnotation(n.types[i - 1]) && isObjectTypeAnnotation(n.types[i]))
         ) {
           // If you go from object to non-object or vis-versa, then inline it
           result.push(" & ", types[i]);
@@ -1843,14 +1865,125 @@ function genericPrintNoParens(path, options, print) {
       return "any";
     case "TSBooleanKeyword":
       return "boolean";
+    case "TSNeverKeyword":
+      return "never";
     case "TSNumberKeyword":
       return "number";
     case "TSObjectKeyword":
       return "object";
+    case "TSPrivateKeyword":
+      return "private";
+    case "TSReadonlyKeyword":
+      return "readonly";
     case "TSStringKeyword":
       return "string";
+    case "TSSymbolKeyword":
+      return "symbol";
+    case "TSUndefinedKeyword":
+      return "undefined";
     case "TSVoidKeyword":
       return "void";
+    case "TSInterfaceDeclaration": {
+      parts.push(
+        "interface ",
+        path.call(print, "name"),
+        path.call(print, "typeParameters"),
+        " "
+      );
+
+      if (n.heritageClauses && n.heritageClauses.length > 0) {
+        parts.push(
+          "extends ",
+          join(", ", path.map(print, "heritageClauses")),
+          " "
+        );
+      }
+
+      // Leave this here because we *might* want to make this
+      // configurable later -- typescript accepts ";" and newlines for type separators, 
+      var separator = ",";
+      var fields = [];
+
+      fields.push("members");
+
+      var props = [];
+      let separatorParts = [];
+
+      fields.forEach(function(field) {
+        path.each(
+          function(childPath) {
+            props.push(concat(separatorParts));
+            props.push(group(print(childPath)));
+
+            separatorParts = [separator, line];
+            if (
+              util.isNextLineEmpty(options.originalText, childPath.getValue())
+            ) {
+              separatorParts.push(hardline);
+            }
+          },
+          field
+        );
+      });
+
+      const lastElem = util.getLast(n.members);
+
+      const shouldBreak =
+        util.hasNewlineInRange(
+          options.originalText,
+          util.locStart(n),
+          util.locEnd(n)
+        );
+
+      if (props.length === 0) {
+        parts.push(group(
+          concat([
+            "{",
+            comments.printDanglingComments(path, options),
+            softline,
+            "}"
+          ])
+        ));
+      } else {
+        parts.push(group(
+          concat([
+            "{",
+            indent(
+              options.tabWidth + (parentIsUnionTypeAnnotation ? 2 : 0),
+              concat([options.bracketSpacing ? line : softline, concat(props)])
+            ),
+            ifBreak(
+              shouldPrintComma(options) ? "," : ""
+            ),
+            indent(
+              parentIsUnionTypeAnnotation ? 2 : 0,
+              concat([options.bracketSpacing ? line : softline, "}"])
+            ),
+            path.call(print, "typeAnnotation")
+          ]),
+          { shouldBreak }
+        ));
+      }
+
+      return concat(parts);
+    }
+    case "TSHeritageClause":
+      return join(", ", path.map(print, "types"))
+    case "TSExpressionWithTypeArguments":
+      return concat([path.call(print, "expression"), path.call(print, "typeParameters")]);
+    case "TSParameterProperty":
+      if (n.accessibility === "public") {
+        parts.push("public ")
+      } else if (n.accessibility === "protected") {
+        parts.push("protected ")
+      } else if (n.accessibility === "private") {
+        parts.push("private ")
+      }
+      if (n.isReadonly) {
+        parts.push("readonly ")
+      }
+      parts.push(path.call(print, "parameter"));
+      return concat(parts)
     case "TSAsExpression":
       return concat([
         path.call(print, "expression"), 
@@ -1859,31 +1992,69 @@ function genericPrintNoParens(path, options, print) {
       ])
     case "TSArrayType":
       return concat([path.call(print, "elementType"), "[]"]);
-    case "TSPropertySignature":
-      parts.push(path.call(print, "name"));
-      parts.push(path.call(print, "typeAnnotation"));
-
-      return concat(parts);
+    case "TSIndexedAccessType":
+      return concat([
+        path.call(print, "objectType"),
+        "[",
+        path.call(print, "indexType"),
+        "]",
+      ]);
+    case "TSMappedType":
+      parts.push("{");
+      if (n.readonlyToken) {
+        parts.push("readonly ");
+      }
+      parts.push(path.call(print, "typeParameter"));
+      if (n.questionToken) {
+        parts.push("?");
+      }
+      parts.push(
+        path.call(print, "typeAnnotation"),
+        "}",
+      )
+      return concat(parts)
+    case "TSParenthesizedType":
+      return concat(["(", path.call(print, "typeAnnotation"), ")"]);
+    case "TSThisType":
+      return "this";
+    case "TSFirstTypeNode":
+      return concat([
+        path.call(print, "parameterName"),
+        " is ",
+        path.call(print, "typeAnnotation"),
+      ]);
+    case "TSLastTypeNode":
+      return path.call(print, "literal")
+    case "TSTypeOperator":
+      return concat(["keyof ", path.call(print, "typeAnnotation")])
+    case "TSTypeParameter":
+      return concat([
+        "[",
+        path.call(print, "name"),
+        " in ",
+        path.call(print, "constraint"),
+        "]",
+      ])
     case "TSTypeReference":
-      return concat([path.call(print, "typeName")]);
+      return concat([
+        path.call(print, "typeName"),
+        path.call(print, "typeParameters"),
+      ]);
+    case "TSTypeQuery":
+      return concat(["typeof ", path.call(print, "exprName")]);
     case "TSCallSignature":
       return concat([
-        "(", 
-        join(", ", path.map(print, "parameters")), 
-        "): ",
+        path.call(print, "typeParameters"),
+        printFunctionParams(path, print, options),
         path.call(print, "typeAnnotation"), 
       ]);
     case "TSConstructSignature":
       return concat([
-        "new (", 
-        join(", ", path.map(print, "parameters")), 
-        "): ",
-        path.call(print, "typeAnnotation"), 
+        "new ",
+        path.call(print, "typeParameters"),
+        printFunctionParams(path, print, options),
+        path.call(print, "typeAnnotation"),
       ]);
-    case "TSTypeQuery":
-      return concat(["typeof ", path.call(print, "exprName")]);
-    case "TSParenthesizedType":
-      return concat(["(", path.call(print, "typeAnnotation"), ")"]);
     case "TSIndexSignature":
       return concat([
         "[", 
@@ -1893,6 +2064,23 @@ function genericPrintNoParens(path, options, print) {
         "]: ",
         path.call(print, "typeAnnotation"), 
       ]);
+    case "TSMethodSignature":
+      return concat([
+        path.call(print, "name"),
+        path.call(print, "typeParameters"),
+        printFunctionParams(path, print, options),
+        path.call(print, "typeAnnotation"),
+      ]);
+    case "TSPropertySignature":
+      if (n.modifiers) {
+        parts.push(concat(
+          path.map(print, "modifiers").map(m => concat([m, " "]))
+        ));
+      }
+      parts.push(path.call(print, "name"));
+      parts.push(path.call(print, "typeAnnotation"));
+
+      return concat(parts);
     // TODO
     case "ClassHeritage":
     // TODO
@@ -1935,6 +2123,11 @@ function genericPrintNoParens(path, options, print) {
       debugger;
       throw new Error("unknown type: " + JSON.stringify(n.type));
   }
+}
+
+function isObjectTypeAnnotation(node) {
+  return node.type === "ObjectTypeAnnotation" ||
+    node.type === "TSTypeLiteral"
 }
 
 function printStatementSequence(path, options, print) {
@@ -2156,7 +2349,13 @@ function printArgumentsList(path, options, print) {
 function printFunctionParams(path, print, options) {
   var fun = path.getValue();
   // namedTypes.Function.assert(fun);
-  var paramsField = fun.type === "TSFunctionType" ? "parameters" : "params";
+  var paramsField = (
+    fun.type === "TSCallSignature" ||
+    fun.type === "TSConstructSignature" ||
+    fun.type === "TSMethodSignature" ||
+    fun.type === "TSFunctionType" ||
+    fun.type === "TSConstructorType"
+  ) ? "parameters" : "params";
   var printed = path.map(print, paramsField);
 
   if (fun.defaults) {
@@ -3123,18 +3322,24 @@ function isEmptyBlock(doc) {
 
 
 function shouldTypeScriptTypeAvoidColon(path) {
-  // As the special TS nodes isn't returned by the node helpers,
-  // we use the stack directly to get the parent node.
-  const parent = path.stack[path.stack.length - 3]
+  const parent = path.getParentNode()
 
   switch (parent.type) {
+    case "TSConstructorType":
     case "TSFunctionType":
-    case "TSIndexSignature":
     case "TSParenthesizedType":
-    case "TSCallSignature":
-    case "TSConstructSignature":
+    case "TSIndexSignature":
     case "TSAsExpression":
+    case "TSFirstTypeNode":
+    case "TSTypeOperator":
       return true
+    case "TypeAnnotation":
+      switch (parent.typeAnnotation.type) {
+        case "TSConstructorType":
+        case "TSFunctionType":
+          return true
+      }
+
     default:
       return false
 

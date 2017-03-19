@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`objectTypeLiteralSyntax.ts 1`] = `
+"var x: {
+    foo: string;
+    bar: string;
+}
+
+var y: {
+    foo: string;
+    bar: string
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var x: {
+  foo: string,
+  bar: string
+};
+
+var y: {
+  foo: string,
+  bar: string
+};
+"
+`;

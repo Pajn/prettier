@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`contextualIntersectionType.ts 1`] = `
+"var x: { a: (s: string) => string } & { b: (n: number) => number };
+x = {
+    a: s => s,
+    b: n => n
+};
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var x: { a: (s: string) => string } & { b: (n: number) => number };
+x = {
+  a: s => s,
+  b: n => n
+};
+"
+`;
+
+exports[`intersectionTypeAssignment.ts 1`] = `
+"var a: { a: string };
+var b: { b: string };
+var x: { a: string, b: string };
+var y: { a: string } & { b: string };
+
+a = x;
+a = y;
+x = a;  // Error
+y = a;  // Error
+
+b = x;
+b = y;
+x = b;  // Error
+y = b;  // Error
+
+x = y;
+y = x;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var a: { a: string };
+var b: { b: string };
+var x: { a: string, b: string };
+var y: { a: string } & { b: string };
+
+a = x;
+a = y;
+x = a; // Error
+y = a; // Error
+
+b = x;
+b = y;
+x = b; // Error
+y = b; // Error
+
+x = y;
+y = x;
+"
+`;
+
+exports[`intersectionTypeOverloading.ts 1`] = `
+"// Check that order is preserved in intersection types for purposes of
+// overload resolution
+
+type F = (s: string) => string;
+type G = (x: any) => any;
+
+var fg: F & G;
+var gf: G & F;
+
+var x = fg(\\"abc\\");
+var x: string;
+
+var y = gf(\\"abc\\");
+var y: any;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Check that order is preserved in intersection types for purposes of
+// overload resolution
+
+type F = (s: string) => string;
+type G = (x: any) => any;
+
+var fg: F & G;
+var gf: G & F;
+
+var x = fg(\\"abc\\");
+var x: string;
+
+var y = gf(\\"abc\\");
+var y: any;
+"
+`;
+
+exports[`operatorsAndIntersectionTypes.ts 1`] = `
+"type Guid = string & { $Guid };          // Tagged string type
+type SerialNo = number & { $SerialNo };  // Tagged number type
+
+function createGuid() {
+    return \\"21EC2020-3AEA-4069-A2DD-08002B30309D\\" as Guid;
+}
+
+function createSerialNo() {
+    return 12345 as SerialNo;
+}
+
+let map1: { [x: string]: number } = {};
+let guid = createGuid();
+map1[guid] = 123;  // Can with tagged string
+
+let map2: { [x: number]: string } = {};
+let serialNo = createSerialNo();
+map2[serialNo] = \\"hello\\";  // Can index with tagged number
+
+const s1 = \\"{\\" + guid + \\"}\\";
+const s2 = guid.toLowerCase();
+const s3 = guid + guid;
+const s4 = guid + serialNo;
+const s5 = serialNo.toPrecision(0);
+const n1 = serialNo * 3;
+const n2 = serialNo + serialNo;
+const b1 = guid === \\"\\";
+const b2 = guid === guid;
+const b3 = serialNo === 0;
+const b4 = serialNo === serialNo;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+type Guid = string & { $Guid }; // Tagged string type
+type SerialNo = number & { $SerialNo }; // Tagged number type
+
+function createGuid() {
+  return \\"21EC2020-3AEA-4069-A2DD-08002B30309D\\" as Guid;
+}
+
+function createSerialNo() {
+  return 12345 as SerialNo;
+}
+
+let map1: { [x: string]: number } = {};
+let guid = createGuid();
+map1[guid] = 123; // Can with tagged string
+
+let map2: { [x: number]: string } = {};
+let serialNo = createSerialNo();
+map2[serialNo] = \\"hello\\"; // Can index with tagged number
+
+const s1 = \\"{\\" + guid + \\"}\\";
+const s2 = guid.toLowerCase();
+const s3 = guid + guid;
+const s4 = guid + serialNo;
+const s5 = serialNo.toPrecision(0);
+const n1 = serialNo * 3;
+const n2 = serialNo + serialNo;
+const b1 = guid === \\"\\";
+const b2 = guid === guid;
+const b3 = serialNo === 0;
+const b4 = serialNo === serialNo;
+"
+`;
